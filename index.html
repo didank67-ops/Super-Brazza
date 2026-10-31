@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Super Brazza</title>
+<style>
+  :root {
+    --vert: #0f7a43;
+    --jaune: #ffc928;
+    --rouge: #d62828;
+    --fond: #fff8e1;
+    --encre: #1d2b22;
+    --blanc: #ffffff;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+    background: var(--fond);
+    color: var(--encre);
+    min-height: 100vh;
+    padding: 16px 16px 40px;
+  }
+  main { max-width: 560px; margin: 0 auto; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  h1 { font-size: 1.6rem; margin: 0; color: var(--vert); letter-spacing: .5px; }
+  .langues { display: flex; gap: 6px; }
+  .langues button {
+    border: 2px solid var(--vert); background: var(--blanc); color: var(--vert);
+    font: inherit; font-weight: 700; padding: 6px 12px; border-radius: 999px; cursor: pointer;
+  }
+  .langues button[aria-pressed="true"] { background: var(--vert); color: var(--blanc); }
+  .scene { display: flex; align-items: flex-end; gap: 12px; margin: 18px 0 10px; }
+  .scene svg { width: 112px; height: 112px; flex: none; }
+  .bulle {
+    background: var(--blanc); border: 3px solid var(--vert); border-radius: 22px 22px 22px 4px;
+    padding: 12px 14px; font-size: 1.05rem; line-height: 1.45; min-height: 64px; flex: 1;
+    white-space: pre-wrap; overflow-wrap: anywhere;
+  }
+  .bulle.limite { border-color: var(--rouge); }
+  .compteur { font-weight: 700; margin: 6px 0 12px; }
+  .compteur span { color: var(--rouge); }
+  textarea {
+    width: 100%; min-height: 96px; resize: vertical; font: inherit; font-size: 1.05rem;
+    padding: 12px; border: 3px solid var(--encre); border-radius: 14px; background: var(--blanc);
+  }
+  .actions { display: flex; gap: 10px; margin-top: 10px; }
+  .actions button {
+    font: inherit; font-weight: 700; font-size: 1.05rem; border: 0; border-radius: 14px;
+    padding: 14px 18px; cursor: pointer; min-height: 52px;
+  }
+  #envoyer { flex: 1; background: var(--vert); color: var(--blanc); }
+  #micro { background: var(--jaune); color: var(--encre); }
+  #micro.ecoute { background: var(--rouge); color: var(--blanc); }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  button:focus-visible, textarea:focus-visible { outline: 4px solid #1a73e8; outline-offset: 2px; }
+  .cahier { margin-top: 14px; font-size: .98rem; background: #e6f4ea; border-radius: 12px; padding: 10px 12px; }
+  .cahier[hidden] { display: none; }
+  .info { margin-top: 10px; font-size: .9rem; color: #5b6a60; }
+  @media (prefers-reduced-motion: no-preference) {
+    .scene svg.parle { animation: saut .5s ease-in-out infinite alternate; }
+    @keyframes saut { from { transform: translateY(0); } to { transform: translateY(-6px); } }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Super Brazza</h1>
+    <div class="langues" role="group" aria-label="Langue">
+      <button type="button" id="l-fr" aria-pressed="true">FR</button>
+      <button type="button" id="l-en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <div class="scene">
+    <svg id="mascotte" viewBox="0 0 120 120" role="img" aria-label="Super Brazza">
+      <path d="M18 112 L30 70 L90 70 L102 112 Z" fill="#d62828"/>
+      <circle cx="60" cy="50" r="34" fill="#ffc928" stroke="#1d2b22" stroke-width="3"/>
+      <path d="M26 42 Q60 28 94 42 L92 58 Q60 48 28 58 Z" fill="#0f7a43" stroke="#1d2b22" stroke-width="3"/>
+      <ellipse cx="46" cy="48" rx="8" ry="6" fill="#fff"/>
+      <ellipse cx="74" cy="48" rx="8" ry="6" fill="#fff"/>
+      <circle cx="48" cy="48" r="3" fill="#1d2b22"/>
+      <circle cx="72" cy="48" r="3" fill="#1d2b22"/>
+      <path d="M44 66 Q60 80 76 66" fill="none" stroke="#1d2b22" stroke-width="4" stroke-linecap="round"/>
+      <path d="M60 4 L66 20 L54 20 Z" fill="#d62828"/>
+    </svg>
+    <div class="bulle" id="reponse" aria-live="polite"></div>
+  </div>
+
+  <p class="compteur" id="compteur"></p>
+
+  <label for="question" id="label-question" class="info"></label>
+  <textarea id="question" maxlength="300"></textarea>
+
+  <div class="actions">
+    <button type="button" id="micro"></button>
+    <button type="button" id="envoyer"></button>
+  </div>
+
+  <p class="cahier" id="cahier" hidden></p>
+  <p class="info" id="info-micro" hidden></p>
+</main>
+
+<script>
+// 1) Remplace cette adresse par celle de ton Worker Cloudflare (workers.dev)
+const WORKER_URL = "https://REMPLACE-PAR-TON-WORKER.workers.dev";
+const LIMITE = 2;
+
+const T = {
+  fr: {
+    accueil: "Salut ! Je suis Super Brazza. Écris ta question dans ton cahier, puis pose-la-moi ici !",
+    label: "Ta question",
+    placeholder: "Écris ou dis ta question…",
+    envoyer: "Demander",
+    micro: "🎤 Parler",
+    ecoute: "🎤 J’écoute…",
+    reste: n => `Questions restantes aujourd’hui : ${n}`,
+    cahier: "✏️ Recopie la réponse dans ton cahier pour bien la comprendre.",
+    reflexion: "Je réfléchis…",
+    vide: "Écris d’abord ta question.",
+    reseau: "Pas de connexion. Vérifie ton réseau et réessaie.",
+    erreur: "Super Brazza est fatigué en ce moment. Réessaie dans un instant !",
+    limite: "Merci ! 🦸 Tu as utilisé tes 2 questions d’aujourd’hui. Recopie bien tes réponses dans ton cahier, apprends-les par cœur, et reviens demain !",
+    pasMicro: "Le micro ne marche pas sur ce téléphone. Écris ta question.",
+    microErreur: "Je n’ai pas bien entendu. Réessaie ou écris ta question."
+  },
+  en: {
+    accueil: "Hi! I’m Super Brazza. Write your question in your notebook, then ask me here!",
+    label: "Your question",
+    placeholder: "Write or say your question…",
+    envoyer: "Ask",
+    micro: "🎤 Speak",
+    ecoute: "🎤 Listening…",
+    reste: n => `Questions left today: ${n}`,
+    cahier: "✏️ Copy the answer into your notebook to understand it well.",
+    reflexion: "Thinking…",
+    vide: "Write your question first.",
+    reseau: "No connection. Check your network and try again.",
+    erreur: "Super Brazza is tired right now. Try again in a moment!",
+    limite: "Thank you! 🦸 You have used your 2 questions for today. Copy your answers into your notebook, learn them well, and come back tomorrow!",
+    pasMicro: "The microphone does not work on this phone. Please type your question.",
+    microErreur: "I did not hear well. Try again or type your question."
+  }
+};
+
+const $ = id => document.getElementById(id);
+const zoneRep = $("reponse"), champ = $("question"), btnEnv = $("envoyer"),
+      btnMic = $("micro"), mascotte = $("mascotte");
+
+let lang = "fr";
+let restantes = LIMITE;
+let bloque = false;
+
+// Stockage local protégé (certains navigateurs le refusent)
+function lire(cle) { try { return localStorage.getItem(cle); } catch (e) { return null; } }
+function ecrire(cle, val) { try { localStorage.setItem(cle, val); } catch (e) {} }
+
+function jour() { return new Date(Date.now() + 3600000).toISOString().slice(0, 10); }
+
+function idAppareil() {
+  let id = lire("sb_id");
+  if (!id) {
+    id = (window.crypto && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : "id-" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    ecrire("sb_id", id);
+  }
+  return id;
+}
+
+function afficherCompteur() {
+  $("compteur").innerHTML = "";
+  const t = T[lang].reste(restantes);
+  const sep = t.lastIndexOf(" ");
+  $("compteur").append(t.slice(0, sep + 1));
+  const s = document.createElement("span");
+  s.textContent = t.slice(sep + 1);
+  $("compteur").append(s);
+}
+
+function memoriserRestantes(n) {
+  restantes = n;
+  ecrire("sb_reste_" + jour(), String(n));
+  afficherCompteur();
+}
+
+function bloquer() {
+  bloque = true;
+  btnEnv.disabled = true; btnMic.disabled = true; champ.disabled = true;
+  zoneRep.classList.add("limite");
+  zoneRep.textContent = T[lang].limite;
+  $("cahier").hidden = true;
+}
+
+function appliquerLangue(l) {
+  lang = l;
+  ecrire("sb_lang", l);
+  document.documentElement.lang = l;
+  $("l-fr").setAttribute("aria-pressed", l === "fr");
+  $("l-en").setAttribute("aria-pressed", l === "en");
+  $("label-question").textContent = T[l].label;
+  champ.placeholder = T[l].placeholder;
+  btnEnv.textContent = T[l].envoyer;
+  btnMic.textContent = T[l].micro;
+  $("cahier").textContent = T[l].cahier;
+  afficherCompteur();
+  if (bloque) zoneRep.textContent = T[l].limite;
+  else if (!zoneRep.dataset.rep) zoneRep.textContent = T[l].accueil;
+}
+
+async function demander() {
+  const question = champ.value.trim();
+  if (!question) { zoneRep.textContent = T[lang].vide; delete zoneRep.dataset.rep; return; }
+  btnEnv.disabled = true; btnMic.disabled = true;
+  zoneRep.classList.remove("limite");
+  zoneRep.textContent = T[lang].reflexion;
+  mascotte.classList.add("parle");
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question, deviceId: idAppareil(), lang })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      zoneRep.textContent = data.answer;
+      zoneRep.dataset.rep = "1";
+      champ.value = "";
+      $("cahier").hidden = false;
+      memoriserRestantes(data.remaining);
+      if (data.remaining <= 0) { btnEnv.disabled = true; btnMic.disabled = true; champ.disabled = true; bloque = true; }
+    } else if (data.limitReached) {
+      memoriserRestantes(0);
+      bloquer();
+    } else {
+      zoneRep.textContent = data.error || T[lang].erreur;
+      delete zoneRep.dataset.rep;
+      if (typeof data.remaining === "number") memoriserRestantes(data.remaining);
+    }
+  } catch (e) {
+    zoneRep.textContent = T[lang].reseau;
+    delete zoneRep.dataset.rep;
+  } finally {
+    mascotte.classList.remove("parle");
+    if (!bloque) { btnEnv.disabled = false; btnMic.disabled = false; }
+  }
+}
+
+// Micro : reconnaissance vocale du navigateur (gratuite)
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null, enEcoute = false;
+
+function basculerMicro() {
+  if (!SR) { zoneRep.textContent = T[lang].pasMicro; delete zoneRep.dataset.rep; return; }
+  if (enEcoute && rec) { rec.stop(); return; }
+  rec = new SR();
+  rec.lang = lang === "en" ? "en-US" : "fr-FR";
+  rec.interimResults = false;
+  rec.maxAlternatives = 1;
+  rec.onstart = () => { enEcoute = true; btnMic.classList.add("ecoute"); btnMic.textContent = T[lang].ecoute; };
+  rec.onresult = ev => { champ.value = ev.results[0][0].transcript; };
+  rec.onerror = () => { zoneRep.textContent = T[lang].microErreur; delete zoneRep.dataset.rep; };
+  rec.onend = () => { enEcoute = false; btnMic.classList.remove("ecoute"); btnMic.textContent = T[lang].micro; };
+  rec.start();
+}
+
+$("l-fr").addEventListener("click", () => appliquerLangue("fr"));
+$("l-en").addEventListener("click", () => appliquerLangue("en"));
+btnEnv.addEventListener("click", demander);
+btnMic.addEventListener("click", basculerMicro);
+champ.addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); demander(); }
+});
+
+// Démarrage
+const l0 = lire("sb_lang");
+const r0 = lire("sb_reste_" + jour());
+if (r0 !== null) restantes = Math.max(0, parseInt(r0, 10) || 0);
+appliquerLangue(l0 === "en" ? "en" : "fr");
+if (restantes <= 0) bloquer();
+</script>
+</body>
+</html>
