@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Super Brazza</title>
+<meta name="theme-color" content="#0f7a43">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+  :root {
+    --vert: #0f7a43; --vert-fonce: #0a5a31; --jaune: #ffc928; --rouge: #d62828;
+    --fond: #fff8e1; --encre: #1d2b22; --blanc: #ffffff;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+    background: var(--fond); color: var(--encre);
+    min-height: 100vh; padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+  header {
+    position: sticky; top: 0; z-index: 5; background: var(--vert); color: var(--blanc);
+    display: flex; align-items: center; gap: 10px; padding: 8px 14px;
+    padding-top: calc(8px + env(safe-area-inset-top, 0px));
+  }
+  header img { width: 40px; height: 40px; }
+  header h1 { font-size: 1.25rem; margin: 0; flex: 1; }
+  .langues { display: flex; gap: 6px; }
+  .langues button {
+    border: 2px solid var(--jaune); background: transparent; color: var(--blanc);
+    font: inherit; font-weight: 700; padding: 4px 10px; border-radius: 999px; cursor: pointer;
+  }
+  .langues button[aria-pressed="true"] { background: var(--jaune); color: var(--encre); }
+  main { max-width: 560px; margin: 0 auto; padding: 14px; }
+  .vue[hidden] { display: none; }
+
+  /* Accueil */
+  .hero { background: #000; border-radius: 20px; overflow: hidden; border: 4px solid var(--jaune); }
+  .hero video { display: block; width: 100%; max-height: 62vh; object-fit: cover; background: #000; }
+  .btn-ecouter {
+    display: block; width: 100%; margin: 12px 0; border: 0; border-radius: 16px; cursor: pointer;
+    background: var(--jaune); color: var(--encre); font: inherit; font-weight: 700; font-size: 1.1rem; padding: 14px;
+  }
+  .salut {
+    background: var(--blanc); border: 3px solid var(--vert); border-radius: 18px 18px 18px 4px;
+    padding: 10px 14px; margin: 14px 0 0; font-size: 1.02rem; line-height: 1.4;
+  }
+  .grille { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .tuile {
+    text-align: left; font: inherit; background: var(--blanc); color: var(--encre);
+    border: 2px solid var(--vert); border-radius: 16px; padding: 12px; cursor: pointer; min-height: 104px;
+  }
+  .tuile.large { grid-column: 1 / -1; background: var(--vert); color: var(--blanc); }
+  .tuile .emoji { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+  .tuile b { display: block; font-size: 1.02rem; }
+  .tuile small { display: block; margin-top: 2px; font-size: .85rem; opacity: .8; line-height: 1.3; }
+  h2 { font-size: 1.1rem; margin: 22px 0 8px; color: var(--vert-fonce); }
+  .maillots { display: flex; gap: 10px; }
+  .maillot { flex: 1; position: relative; background: var(--blanc); border: 3px solid #cfd8d2; border-radius: 14px; padding: 6px; text-align: center; }
+  .maillot.actif { border-color: var(--jaune); }
+  .maillot img { width: 100%; height: 110px; object-fit: contain; }
+  .maillot.verrou img { filter: grayscale(1) brightness(.35); }
+  .maillot span { display: block; font-size: .8rem; font-weight: 700; margin-top: 2px; }
+  .maillot .cadenas { position: absolute; top: 6px; right: 8px; font-size: 1.1rem; }
+
+  /* Chat */
+  .scene { display: flex; align-items: flex-end; gap: 12px; margin: 6px 0 10px; }
+  .scene img { width: 96px; flex: none; }
+  .scene img.parle { animation: saut .5s ease-in-out infinite alternate; }
+  @keyframes saut { from { transform: translateY(0); } to { transform: translateY(-6px); } }
+  @media (prefers-reduced-motion: reduce) { .scene img.parle { animation: none; } }
+  .bulle {
+    background: var(--blanc); border: 3px solid var(--vert); border-radius: 22px 22px 22px 4px;
+    padding: 12px 14px; font-size: 1.05rem; line-height: 1.45; min-height: 64px; flex: 1;
+    white-space: pre-wrap; overflow-wrap: anywhere;
+  }
+  .bulle.limite { border-color: var(--rouge); }
+  .compteur { font-weight: 700; margin: 6px 0 12px; }
+  .compteur span { color: var(--rouge); }
+  textarea {
+    width: 100%; min-height: 96px; resize: vertical; font: inherit; font-size: 1.05rem;
+    padding: 12px; border: 3px solid var(--encre); border-radius: 14px; background: var(--blanc);
+  }
+  .actions { display: flex; gap: 10px; margin-top: 10px; }
+  .actions button {
+    font: inherit; font-weight: 700; font-size: 1.05rem; border: 0; border-radius: 14px;
+    padding: 14px 18px; cursor: pointer; min-height: 52px;
+  }
+  #envoyer { flex: 1; background: var(--vert); color: var(--blanc); }
+  #micro { background: var(--jaune); color: var(--encre); }
+  #micro.ecoute { background: var(--rouge); color: var(--blanc); }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .cahier { margin-top: 14px; background: #e6f4ea; border-radius: 12px; padding: 10px 12px; }
+  .cahier[hidden] { display: none; }
+  .info { font-size: .92rem; color: #5b6a60; }
+
+  /* Bientôt */
+  .bientot { text-align: center; padding: 28px 8px; }
+  .bientot img { width: 120px; }
+  .bientot h2 { font-size: 1.3rem; margin-top: 10px; }
+  .retour {
+    border: 2px solid var(--vert); background: var(--blanc); color: var(--vert); font: inherit;
+    font-weight: 700; border-radius: 999px; padding: 8px 16px; cursor: pointer; margin-bottom: 10px;
+  }
+
+  nav {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: var(--blanc);
+    border-top: 3px solid var(--vert); display: flex;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  nav button {
+    flex: 1; border: 0; background: transparent; font: inherit; padding: 8px 2px; cursor: pointer; color: #5b6a60;
+  }
+  nav button .emoji { display: block; font-size: 1.4rem; }
+  nav button small { font-weight: 700; }
+  nav button[aria-current="page"] { color: var(--vert); }
+  button:focus-visible { outline: 4px solid #1a73e8; outline-offset: 2px; }
+  textarea:focus-visible { outline: 4px solid #1a73e8; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<header>
+  <img src="assets/logo-rond.png" alt="">
+  <h1>Super Brazza</h1>
+  <div class="langues" role="group" aria-label="Langue">
+    <button type="button" id="l-fr" aria-pressed="true">FR</button>
+    <button type="button" id="l-en" aria-pressed="false">EN</button>
+  </div>
+</header>
+
+<main>
+  <!-- ACCUEIL -->
+  <section class="vue" id="v-accueil">
+    <div class="hero">
+      <video id="video" src="assets/video-accueil.mp4" poster="assets/poster.jpg" muted loop autoplay playsinline preload="metadata"></video>
+    </div>
+    <button type="button" class="btn-ecouter" id="btn-ecouter"></button>
+    <p class="salut" id="salut"></p>
+    <div class="grille" id="grille"></div>
+    <h2 id="t-maillots"></h2>
+    <div class="maillots">
+      <div class="maillot actif"><img src="assets/brazza-vert.png" alt=""><span id="m1"></span></div>
+      <div class="maillot verrou"><span class="cadenas">🔒</span><img src="assets/brazza-blanc.png" alt=""><span id="m2"></span></div>
+      <div class="maillot verrou"><span class="cadenas">🔒</span><img src="assets/brazza-rouge.png" alt=""><span id="m3"></span></div>
+    </div>
+  </section>
+
+  <!-- CHAT -->
+  <section class="vue" id="v-chat" hidden>
+    <div class="scene">
+      <img id="mascotte" src="assets/brazza-vert.png" alt="Super Brazza">
+      <div class="bulle" id="reponse" aria-live="polite"></div>
+    </div>
+    <p class="compteur" id="compteur"></p>
+    <label for="question" id="label-question" class="info"></label>
+    <textarea id="question" maxlength="300"></textarea>
+    <div class="actions">
+      <button type="button" id="micro"></button>
+      <button type="button" id="envoyer"></button>
+    </div>
+    <p class="cahier" id="cahier" hidden></p>
+  </section>
+
+  <!-- BIENTÔT -->
+  <section class="vue" id="v-bientot" hidden>
+    <button type="button" class="retour" id="retour"></button>
+    <div class="bientot">
+      <img src="assets/brazza-vert.png" alt="">
+      <h2 id="bientot-titre"></h2>
+      <p id="bientot-texte"></p>
+    </div>
+  </section>
+</main>
+
+<nav aria-label="Menu">
+  <button type="button" data-nav="accueil" aria-current="page"><span class="emoji">🏠</span><small id="n-accueil"></small></button>
+  <button type="button" data-nav="quiz"><span class="emoji">🧠</span><small id="n-quiz"></small></button>
+  <button type="button" data-nav="histoire"><span class="emoji">🌙</span><small id="n-histoire"></small></button>
+  <button type="button" data-nav="chat"><span class="emoji">💬</span><small>Brazza</small></button>
+</nav>
+
+<script>
+// Adresse de ton Worker Cloudflare
+const WORKER_URL = "https://super-brazza.noxyliabot.workers.dev";
+const LIMITE = 2;
+
+// Rubriques de l'accueil : "live" = déjà disponible
+const RUBRIQUES = [
+  { id: "chat",        e: "💬", live: true, large: true,
+    fr: ["Discuter avec Super Brazza", "Pose-lui tes questions (2 par jour)"],
+    en: ["Chat with Super Brazza", "Ask him your questions (2 per day)"] },
+  { id: "quiz",        e: "🧠", fr: ["Quiz Congo", "Géographie, histoire, culture"], en: ["Congo Quiz", "Geography, history, culture"] },
+  { id: "histoire",    e: "🌙", fr: ["Histoire du soir", "Une histoire pour dormir"], en: ["Bedtime story", "A story to fall asleep"] },
+  { id: "cahier",      e: "✏️", fr: ["Mon cahier", "Garde tes questions et réponses"], en: ["My notebook", "Keep your questions and answers"] },
+  { id: "chansons",    e: "🎵", fr: ["Chansons", "Berceuse ou danse"], en: ["Songs", "Lullaby or dance"] },
+  { id: "anglais",     e: "🇬🇧", fr: ["Anglais", "Animaux et conversation"], en: ["English", "Animals and conversation"] },
+  { id: "parent",      e: "📊", fr: ["Espace Parent", "Suivre les progrès de mon enfant"], en: ["Parent area", "Follow my child’s progress"] },
+  { id: "badges",      e: "🏅", fr: ["Mes badges", "0 / 6 badges débloqués"], en: ["My badges", "0 / 6 badges unlocked"] },
+  { id: "jeux",        e: "⚽", fr: ["Jeux : Tirs au but", "Réponds aux questions et marque !"], en: ["Game: Penalty shootout", "Answer questions and score!"] },
+  { id: "hymne",       e: "🇨🇬", fr: ["Hymne National", "Apprends l’hymne avec Super Brazza"], en: ["National anthem", "Learn the anthem with Super Brazza"] },
+  { id: "anniversaire",e: "🎂", fr: ["Anniversaire", "Chanter joyeux anniversaire à un(e) ami(e)"], en: ["Birthday", "Sing happy birthday to a friend"] },
+  { id: "noxylia",     e: "🏢", fr: ["À propos de Noxylia", "Qui a créé Super Brazza, et nos services"], en: ["About Noxylia", "Who made Super Brazza, and our services"] }
+];
+
+const T = {
+  fr: {
+    ecouter: "🔊 Écouter Super Brazza", coupe: "🔇 Couper le son",
+    salut: "Salut ! Je suis Super Brazza. Appuie sur « Écouter », puis choisis une rubrique !",
+    maillots: "Mes maillots", m1: "Domicile", m2: "Extérieur", m3: "Prestige",
+    accueil: "Accueil", quiz: "Quiz", histoire: "Histoires", retour: "← Retour",
+    bientotTexte: "Cette rubrique arrive bientôt. Super Brazza la prépare !",
+    accueilChat: "Salut ! Je suis Super Brazza. Écris ta question dans ton cahier, puis pose-la-moi ici !",
+    label: "Ta question", placeholder: "Écris ou dis ta question…", envoyer: "Demander",
+    micro: "🎤 Parler", ecoute: "🎤 J’écoute…",
+    reste: n => `Questions restantes aujourd’hui : ${n}`,
+    cahier: "✏️ Recopie la réponse dans ton cahier pour bien la comprendre.",
+    reflexion: "Je réfléchis…", vide: "Écris d’abord ta question.",
+    reseau: "Pas de connexion. Vérifie ton réseau et réessaie.",
+    erreur: "Super Brazza est fatigué en ce moment. Réessaie dans un instant !",
+    limite: "Merci ! 🦸 Tu as utilisé tes 2 questions d’aujourd’hui. Recopie bien tes réponses dans ton cahier, apprends-les par cœur, et reviens demain !",
+    pasMicro: "Le micro ne marche pas sur ce téléphone. Écris ta question.",
+    microErreur: "Je n’ai pas bien entendu. Réessaie ou écris ta question."
+  },
+  en: {
+    ecouter: "🔊 Listen to Super Brazza", coupe: "🔇 Mute",
+    salut: "Hi! I’m Super Brazza. Tap “Listen”, then pick a section!",
+    maillots: "My jerseys", m1: "Home", m2: "Away", m3: "Prestige",
+    accueil: "Home", quiz: "Quiz", histoire: "Stories", retour: "← Back",
+    bientotTexte: "This section is coming soon. Super Brazza is working on it!",
+    accueilChat: "Hi! I’m Super Brazza. Write your question in your notebook, then ask me here!",
+    label: "Your question", placeholder: "Write or say your question…", envoyer: "Ask",
+    micro: "🎤 Speak", ecoute: "🎤 Listening…",
+    reste: n => `Questions left today: ${n}`,
+    cahier: "✏️ Copy the answer into your notebook to understand it well.",
+    reflexion: "Thinking…", vide: "Write your question first.",
+    reseau: "No connection. Check your network and try again.",
+    erreur: "Super Brazza is tired right now. Try again in a moment!",
+    limite: "Thank you! 🦸 You have used your 2 questions for today. Copy your answers into your notebook, learn them well, and come back tomorrow!",
+    pasMicro: "The microphone does not work on this phone. Please type your question.",
+    microErreur: "I did not hear well. Try again or type your question."
+  }
+};
+
+const $ = id => document.getElementById(id);
+const zoneRep = $("reponse"), champ = $("question"), btnEnv = $("envoyer"),
+      btnMic = $("micro"), mascotte = $("mascotte"), video = $("video");
+
+let lang = "fr", restantes = LIMITE, bloque = false, vue = "accueil", rubCourante = "";
+
+function lire(c) { try { return localStorage.getItem(c); } catch (e) { return null; } }
+function ecrire(c, v) { try { localStorage.setItem(c, v); } catch (e) {} }
+function jour() { return new Date(Date.now() + 3600000).toISOString().slice(0, 10); }
+function idAppareil() {
+  let id = lire("sb_id");
+  if (!id) {
+    id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
+       : "id-" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    ecrire("sb_id", id);
+  }
+  return id;
+}
+
+/* ---------- Navigation ---------- */
+function aller(nom, rubrique) {
+  vue = nom;
+  if (rubrique) rubCourante = rubrique;
+  const actif = nom === "bientot" ? rubCourante : nom;
+  const vueId = nom === "chat" ? "v-chat" : nom === "accueil" ? "v-accueil" : "v-bientot";
+  ["v-accueil", "v-chat", "v-bientot"].forEach(v => { $(v).hidden = (v !== vueId); });
+  if (vueId === "v-bientot") {
+    const r = RUBRIQUES.find(x => x.id === rubCourante);
+    $("bientot-titre").textContent = r ? r.e + " " + r[lang][0] : "";
+    $("bientot-texte").textContent = T[lang].bientotTexte;
+  }
+  document.querySelectorAll("nav button").forEach(b => {
+    if (b.dataset.nav === actif) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
+  });
+  if (nom !== "accueil" && !video.paused) video.pause();
+  if (nom === "accueil") video.play().catch(() => {});
+  window.scrollTo(0, 0);
+}
+
+function construireGrille() {
+  const g = $("grille");
+  g.innerHTML = "";
+  RUBRIQUES.forEach(r => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "tuile" + (r.large ? " large" : "");
+    const e = document.createElement("span"); e.className = "emoji"; e.textContent = r.e;
+    const t = document.createElement("b"); t.textContent = r[lang][0];
+    const s = document.createElement("small"); s.textContent = r[lang][1];
+    b.append(e, t, s);
+    b.addEventListener("click", () => aller(r.live ? r.id : "bientot", r.id));
+    g.append(b);
+  });
+}
+
+/* ---------- Vidéo ---------- */
+function majBoutonSon() {
+  $("btn-ecouter").textContent = video.muted ? T[lang].ecouter : T[lang].coupe;
+}
+$("btn-ecouter").addEventListener("click", () => {
+  video.muted = !video.muted;
+  if (!video.muted) { video.currentTime = 0; }
+  video.play().catch(() => {});
+  majBoutonSon();
+});
+
+/* ---------- Langue ---------- */
+function appliquerLangue(l) {
+  lang = l; ecrire("sb_lang", l);
+  document.documentElement.lang = l;
+  $("l-fr").setAttribute("aria-pressed", l === "fr");
+  $("l-en").setAttribute("aria-pressed", l === "en");
+  const t = T[l];
+  $("salut").textContent = t.salut;
+  $("t-maillots").textContent = t.maillots;
+  $("m1").textContent = t.m1; $("m2").textContent = t.m2; $("m3").textContent = t.m3;
+  $("n-accueil").textContent = t.accueil; $("n-quiz").textContent = t.quiz; $("n-histoire").textContent = t.histoire;
+  $("retour").textContent = t.retour;
+  $("label-question").textContent = t.label;
+  champ.placeholder = t.placeholder;
+  btnEnv.textContent = t.envoyer;
+  if (!enEcoute) btnMic.textContent = t.micro;
+  $("cahier").textContent = t.cahier;
+  majBoutonSon(); construireGrille(); afficherCompteur();
+  if (bloque) zoneRep.textContent = t.limite;
+  else if (!zoneRep.dataset.rep) zoneRep.textContent = t.accueilChat;
+  if (vue !== "accueil" && vue !== "chat") aller(vue);
+}
+
+/* ---------- Chat ---------- */
+function afficherCompteur() {
+  const c = $("compteur"); c.textContent = "";
+  const txt = T[lang].reste(restantes), i = txt.lastIndexOf(" ");
+  c.append(txt.slice(0, i + 1));
+  const s = document.createElement("span"); s.textContent = txt.slice(i + 1); c.append(s);
+}
+function memoriserRestantes(n) {
+  restantes = n; ecrire("sb_reste_" + jour(), String(n)); afficherCompteur();
+}
+function bloquer() {
+  bloque = true;
+  btnEnv.disabled = true; btnMic.disabled = true; champ.disabled = true;
+  zoneRep.classList.add("limite"); zoneRep.textContent = T[lang].limite;
+  $("cahier").hidden = true;
+}
+
+async function demander() {
+  const question = champ.value.trim();
+  if (!question) { zoneRep.textContent = T[lang].vide; delete zoneRep.dataset.rep; return; }
+  btnEnv.disabled = true; btnMic.disabled = true;
+  zoneRep.classList.remove("limite");
+  zoneRep.textContent = T[lang].reflexion;
+  mascotte.classList.add("parle");
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question, deviceId: idAppareil(), lang })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      zoneRep.textContent = data.answer; zoneRep.dataset.rep = "1";
+      champ.value = ""; $("cahier").hidden = false;
+      memoriserRestantes(data.remaining);
+      if (data.remaining <= 0) { bloque = true; btnEnv.disabled = true; btnMic.disabled = true; champ.disabled = true; }
+    } else if (data.limitReached) {
+      memoriserRestantes(0); bloquer();
+    } else {
+      zoneRep.textContent = data.error || T[lang].erreur; delete zoneRep.dataset.rep;
+      if (typeof data.remaining === "number") memoriserRestantes(data.remaining);
+    }
+  } catch (e) {
+    zoneRep.textContent = T[lang].reseau; delete zoneRep.dataset.rep;
+  } finally {
+    mascotte.classList.remove("parle");
+    if (!bloque) { btnEnv.disabled = false; btnMic.disabled = false; }
+  }
+}
+
+/* ---------- Micro (reconnaissance vocale du navigateur) ---------- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null, enEcoute = false;
+function basculerMicro() {
+  if (!SR) { zoneRep.textContent = T[lang].pasMicro; delete zoneRep.dataset.rep; return; }
+  if (enEcoute && rec) { rec.stop(); return; }
+  rec = new SR();
+  rec.lang = lang === "en" ? "en-US" : "fr-FR";
+  rec.interimResults = false; rec.maxAlternatives = 1;
+  rec.onstart = () => { enEcoute = true; btnMic.classList.add("ecoute"); btnMic.textContent = T[lang].ecoute; };
+  rec.onresult = ev => { champ.value = ev.results[0][0].transcript; };
+  rec.onerror = () => { zoneRep.textContent = T[lang].microErreur; delete zoneRep.dataset.rep; };
+  rec.onend = () => { enEcoute = false; btnMic.classList.remove("ecoute"); btnMic.textContent = T[lang].micro; };
+  rec.start();
+}
+
+/* ---------- Événements ---------- */
+$("l-fr").addEventListener("click", () => appliquerLangue("fr"));
+$("l-en").addEventListener("click", () => appliquerLangue("en"));
+$("retour").addEventListener("click", () => aller("accueil"));
+document.querySelectorAll("nav button").forEach(b => {
+  b.addEventListener("click", () => {
+    const n = b.dataset.nav;
+    aller(n === "chat" || n === "accueil" ? n : "bientot", n);
+  });
+});
+btnEnv.addEventListener("click", demander);
+btnMic.addEventListener("click", basculerMicro);
+champ.addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); demander(); }
+});
+
+/* ---------- Démarrage ---------- */
+const r0 = lire("sb_reste_" + jour());
+if (r0 !== null) restantes = Math.max(0, parseInt(r0, 10) || 0);
+appliquerLangue(lire("sb_lang") === "en" ? "en" : "fr");
+if (restantes <= 0) bloquer();
+</script>
+</body>
+</html>
