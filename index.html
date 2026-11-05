@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Super Brazza</title>
+<meta name="theme-color" content="#0b5a34">
+<meta name="description" content="Apprends le Congo en jouant avec Super Brazza : quiz, vidéos, histoires. Rejoins l’équipe ! 🇨🇬">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Super Brazza — La Saga">
+<meta property="og:description" content="Apprends le Congo en jouant avec Super Brazza : quiz, vidéos, histoires. Rejoins l’équipe ! 🇨🇬">
+<meta property="og:image" content="https://didank67-ops.github.io/Super-Brazza/equipe-saga.jpg">
+<meta property="og:url" content="https://didank67-ops.github.io/Super-Brazza/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="logo-rond.png">
+<link rel="apple-touch-icon" href="icon-512.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+  :root {
+    --vert: #0f9d58; --jaune: #ffc928; --rouge: #d62828;
+    --carte: rgba(255,255,255,.08); --bord: rgba(255,255,255,.16); --texte: #ffffff; --doux: #b7cfc2;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif; color: var(--texte);
+    background: linear-gradient(180deg, #0d6b3b 0%, #08391f 45%, #041d10 100%) fixed;
+    min-height: 100vh; padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  }
+  .bande {
+    height: 8px; background: repeating-linear-gradient(90deg, #0f9d58 0 36px, #ffc928 36px 72px, #d62828 72px 108px);
+    margin-top: env(safe-area-inset-top, 0px);
+  }
+  header { display: flex; align-items: center; gap: 8px; padding: 14px 12px 6px; max-width: 560px; margin: 0 auto; }
+  .point { width: 14px; height: 14px; border-radius: 50%; background: var(--jaune); flex: none; }
+  header h1 { font-size: 1.25rem; margin: 0; letter-spacing: .3px; white-space: nowrap; }
+  .crayon { border: 0; background: transparent; font-size: 1.35rem; cursor: pointer; padding: 4px 8px; flex: 1; text-align: left; }
+  .pts {
+    border: 2px solid var(--bord); background: var(--carte); color: var(--texte); border-radius: 999px;
+    font-weight: 700; padding: 8px 14px; white-space: nowrap; font-size: .98rem;
+  }
+  .pts b { color: var(--jaune); }
+  main { max-width: 560px; margin: 0 auto; padding: 8px 16px 16px; }
+  [hidden] { display: none !important; }
+  .vue[hidden] { display: none; }
+
+  /* Accueil */
+  .salut {
+    position: relative; background: #fff; color: #17301f; border-radius: 22px; padding: 14px 18px; margin: 8px 8px 16px;
+    font-size: 1.08rem; line-height: 1.45;
+  }
+  .salut::after {
+    content: ""; position: absolute; left: 50%; bottom: -10px; margin-left: -10px;
+    border: 10px solid transparent; border-bottom: 0; border-top-color: #fff;
+  }
+  .cadre-video { display: flex; justify-content: center; }
+  .boite-video { position: relative; height: min(66vh, 560px); aspect-ratio: 9 / 16; max-width: 100%; }
+  .boite-video video {
+    width: 100%; height: 100%; object-fit: cover; background: #000;
+    border-radius: 22px; border: 4px solid var(--jaune); display: block;
+  }
+  .lecture {
+    position: absolute; inset: 0; margin: auto; width: 84px; height: 84px; border-radius: 50%; border: 0; cursor: pointer;
+    background: rgba(255,201,40,.95); color: #20300f; font-size: 2.2rem; box-shadow: 0 6px 20px rgba(0,0,0,.4);
+  }
+  .lecture[hidden] { display: none; }
+  .btn-ecouter {
+    display: block; margin: 16px auto; border: 0; border-radius: 999px; cursor: pointer; min-width: 78%;
+    background: linear-gradient(180deg, #ffd24a, #f5b800); color: #20300f; font: inherit; font-weight: 800;
+    font-size: 1.18rem; padding: 16px 22px; box-shadow: 0 8px 22px rgba(255,201,40,.35);
+  }
+  .grille { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
+  .tuile {
+    grid-column: 1 / -1; text-align: left; font: inherit; color: var(--texte); background: var(--carte);
+    border: 2px solid var(--bord); border-radius: 28px; padding: 22px 20px; cursor: pointer; min-height: 130px;
+  }
+  .tuile.demi { grid-column: auto; padding: 20px 16px; }
+  .tuile.live { border-color: var(--jaune); }
+  .tuile .emoji { font-size: 2.1rem; display: block; margin-bottom: 14px; }
+  .tuile b { display: block; font-size: 1.2rem; margin-bottom: 8px; }
+  .tuile small { display: block; font-size: 1rem; color: var(--doux); line-height: 1.35; }
+  .carte-maillots { background: var(--carte); border: 2px solid var(--bord); border-radius: 28px; padding: 18px; margin-top: 14px; }
+  .carte-maillots .tete { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .carte-maillots .tete b { font-size: 1.2rem; }
+  .carte-maillots .tete span { color: var(--doux); font-weight: 700; }
+  .maillots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .maillot { position: relative; aspect-ratio: 1; border-radius: 18px; background: #0a2a1a; border: 3px solid transparent; overflow: hidden; padding: 0; cursor: pointer; font: inherit; color: var(--texte); }
+  .maillot.actif { border-color: var(--jaune); }
+  .maillot img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .maillot.verrou img { filter: grayscale(1) brightness(.4); }
+  .maillot .nom { position: absolute; left: 0; right: 0; bottom: 4px; text-align: center; font-size: .8rem; font-weight: 800; text-shadow: 0 1px 3px #000; }
+  .maillot .cadenas { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,.65); border-radius: 999px; min-width: 30px; height: 30px; padding: 0 7px; display: flex; align-items: center; justify-content: center; font-size: .8rem; font-weight: 800; gap: 3px; }
+  .prochain { margin: 12px 0 0; color: var(--doux); font-size: .98rem; text-align: center; }
+
+  /* Chat */
+  .scene { display: flex; align-items: flex-end; gap: 12px; margin: 6px 0 10px; }
+  .scene img { width: 96px; flex: none; }
+  .scene img.parle { animation: saut .5s ease-in-out infinite alternate; }
+  @keyframes saut { from { transform: translateY(0); } to { transform: translateY(-6px); } }
+  @media (prefers-reduced-motion: reduce) { .scene img.parle { animation: none; } }
+  .bulle {
+    background: #fff; color: #17301f; border-radius: 22px 22px 22px 4px; padding: 12px 14px;
+    font-size: 1.05rem; line-height: 1.45; min-height: 64px; flex: 1; white-space: pre-wrap; overflow-wrap: anywhere;
+  }
+  .bulle.limite { box-shadow: 0 0 0 3px var(--rouge); }
+  .compteur { font-weight: 700; margin: 8px 0 12px; }
+  .compteur span { color: var(--jaune); }
+  label.info { color: var(--doux); font-size: .95rem; }
+  textarea {
+    width: 100%; min-height: 96px; resize: vertical; font: inherit; font-size: 1.05rem; color: #17301f;
+    padding: 12px; border: 3px solid var(--jaune); border-radius: 16px; background: #fff;
+  }
+  .actions { display: flex; gap: 10px; margin-top: 10px; }
+  .actions button { font: inherit; font-weight: 800; font-size: 1.05rem; border: 0; border-radius: 16px; padding: 14px 18px; cursor: pointer; min-height: 54px; }
+  #envoyer { flex: 1; background: var(--vert); color: #fff; }
+  #micro { background: var(--jaune); color: #20300f; }
+  #micro.ecoute { background: var(--rouge); color: #fff; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .cahier { margin-top: 14px; background: rgba(15,157,88,.25); border: 2px solid var(--vert); border-radius: 14px; padding: 10px 12px; }
+  .cahier[hidden] { display: none; }
+
+  /* Bientôt */
+  .bientot { text-align: center; padding: 22px 8px; }
+  .bientot img { width: 130px; }
+  .bientot h2 { font-size: 1.4rem; margin: 10px 0 6px; }
+  .bientot p { color: var(--doux); }
+  .retour { border: 2px solid var(--bord); background: var(--carte); color: var(--texte); font: inherit; font-weight: 700; border-radius: 999px; padding: 10px 18px; cursor: pointer; }
+
+  nav {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; display: flex; background: #04210f;
+    border-top: 2px solid var(--bord); padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  nav button { flex: 1; border: 0; background: transparent; font: inherit; padding: 10px 2px 8px; cursor: pointer; color: var(--doux); }
+  nav button .emoji { display: block; font-size: 1.6rem; }
+  nav button small { font-weight: 800; font-size: .95rem; }
+  nav button[aria-current="page"] { color: var(--jaune); }
+
+  /* Fenêtre "Comment tu t'appelles ?" */
+  .voile { position: fixed; inset: 0; z-index: 20; background: rgba(2,14,8,.72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .voile[hidden] { display: none; }
+  .modale { background: #fff; color: #0e2a4a; width: 100%; max-width: 420px; border-radius: 34px; padding: 28px 22px 24px; text-align: center; }
+  .modale img { width: 84px; height: 84px; }
+  .modale h2 { margin: 10px 0 6px; font-size: 1.55rem; }
+  .modale p { margin: 0 0 16px; color: #4d6277; font-size: 1.05rem; line-height: 1.4; }
+  .modale input {
+    width: 100%; font: inherit; font-size: 1.3rem; font-weight: 700; text-align: center; color: #0e2a4a;
+    padding: 16px; border: 3px solid #e1e1e1; border-radius: 999px; background: #fff;
+  }
+  .modale input:focus { border-color: var(--vert); outline: none; }
+  .modale .q { margin: 18px 0 10px; font-weight: 700; color: #35506b; }
+  .ages { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .ages button { font: inherit; font-weight: 800; font-size: 1.1rem; color: #0e2a4a; background: #fff; border: 3px solid #e1e1e1; border-radius: 20px; padding: 16px 0; cursor: pointer; }
+  .ages button[aria-pressed="true"] { border-color: var(--vert); background: #e6f6ec; }
+  .modale .go { width: 100%; margin-top: 20px; border: 0; border-radius: 999px; font: inherit; font-weight: 800; font-size: 1.2rem; padding: 18px; color: #fff; background: linear-gradient(135deg, #0f9d58, #1fbf73); cursor: pointer; }
+  .modale .erreur { color: var(--rouge); font-weight: 700; min-height: 1.3em; margin: 10px 0 0; font-size: .98rem; }
+  .modale .lien { margin-top: 8px; background: transparent; border: 0; color: #4d6277; font: inherit; font-weight: 700; cursor: pointer; padding: 8px; }
+  .modale .lien[hidden] { display: none; }
+
+  /* Message de félicitation / info */
+  .toast { position: fixed; left: 16px; right: 16px; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); z-index: 15; max-width: 520px; margin: 0 auto; background: var(--jaune); color: #20300f; font-weight: 800; border-radius: 18px; padding: 14px 16px; text-align: center; box-shadow: 0 10px 28px rgba(0,0,0,.4); }
+  .toast[hidden] { display: none; }
+
+  /* Voix + quiz */
+  .mini { font: inherit; font-weight: 700; border: 2px solid var(--bord); background: var(--carte); color: var(--texte); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+  .voixbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 12px; }
+  .quiz-carte { background: var(--carte); border: 2px solid var(--bord); border-radius: 28px; padding: 20px; margin-top: 12px; }
+  .quiz-prog { color: var(--doux); font-weight: 700; margin-bottom: 8px; }
+  .quiz-q { font-size: 1.3rem; font-weight: 800; line-height: 1.35; margin: 4px 0 16px; }
+  .reps { display: grid; gap: 12px; }
+  .rep { text-align: left; font: inherit; font-weight: 700; font-size: 1.1rem; color: var(--texte); background: rgba(255,255,255,.1); border: 3px solid var(--bord); border-radius: 20px; padding: 16px; cursor: pointer; }
+  .rep:disabled { opacity: 1; cursor: default; }
+  .rep.bon { background: rgba(15,157,88,.55); border-color: #5be39a; }
+  .rep.mauvais { background: rgba(214,40,40,.55); border-color: #ff8a8a; }
+  .quiz-fb { margin-top: 14px; background: #fff; color: #17301f; border-radius: 18px; padding: 12px 14px; font-size: 1.05rem; line-height: 1.4; }
+  .gros { display: block; width: 100%; margin-top: 14px; border: 0; border-radius: 999px; font: inherit; font-weight: 800; font-size: 1.15rem; padding: 16px; background: var(--jaune); color: #20300f; cursor: pointer; }
+  .gros.second { background: var(--carte); color: var(--texte); border: 2px solid var(--bord); }
+  .cats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .cat { text-align: left; font: inherit; font-weight: 700; color: var(--texte); background: rgba(255,255,255,.1); border: 2px solid var(--bord); border-radius: 20px; padding: 14px; cursor: pointer; }
+  .cat .emoji { font-size: 1.6rem; display: block; margin-bottom: 6px; }
+  .cat small { display: block; color: var(--doux); font-weight: 600; margin-top: 2px; }
+  .cat.large { grid-column: 1 / -1; border-color: var(--jaune); }
+  .score { font-size: 2.6rem; font-weight: 800; text-align: center; margin: 6px 0; }
+  .quiz-carte p { color: var(--doux); font-size: 1.05rem; line-height: 1.4; margin: 8px 0; }
+  /* Notre Équipe + partage */
+  .saga { width: 100%; display: block; border-radius: 22px; border: 4px solid var(--jaune); margin: 10px 0 14px; }
+  .voile.bas { align-items: flex-end; padding: 0; }
+  .feuille { background: #fff; color: #0e2a4a; width: 100%; max-width: 560px; border-radius: 28px 28px 0 0; padding: 22px 18px calc(20px + env(safe-area-inset-bottom, 0px)); text-align: center; }
+  .feuille h2 { margin: 0 0 6px; font-size: 1.4rem; }
+  .feuille .apercu { margin: 0 0 14px; color: #4d6277; font-size: .98rem; line-height: 1.4; }
+  .p-btn { display: block; width: 100%; margin-top: 10px; border: 0; border-radius: 999px; font: inherit; font-weight: 800; font-size: 1.1rem; padding: 15px; cursor: pointer; background: #eef2f0; color: #0e2a4a; }
+  .p-btn.wa { background: #25d366; color: #073b1a; }
+  .p-btn.fb { background: #1877f2; color: #fff; }
+  .p-btn.tg { background: #229ed9; color: #fff; }
+  .feuille .lien { margin-top: 8px; background: transparent; border: 0; color: #4d6277; font: inherit; font-weight: 700; cursor: pointer; padding: 10px; }
+
+  /* Galerie d'ambiance (plein écran) */
+  .galerie { position: fixed; inset: 0; z-index: 12; background: #000; }
+  .galerie[hidden] { display: none; }
+  .glisse { display: flex; height: 100%; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .glisse::-webkit-scrollbar { display: none; }
+  .diapo { flex: 0 0 100%; height: 100%; scroll-snap-align: center; scroll-snap-stop: always; position: relative; display: flex; align-items: center; justify-content: center; background: #000; }
+  .diapo video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+  .g-haut { position: absolute; top: 0; left: 0; right: 0; z-index: 3; display: flex; align-items: center; gap: 10px; padding: 12px 14px; padding-top: calc(12px + env(safe-area-inset-top, 0px)); background: linear-gradient(180deg, rgba(0,0,0,.65), rgba(0,0,0,0)); }
+  .g-haut .g-titre { flex: 1; font-weight: 800; font-size: 1.1rem; }
+  .g-haut .g-statut { font-size: .9rem; color: var(--doux); font-weight: 700; }
+  .g-btn { width: 48px; height: 48px; border-radius: 50%; border: 2px solid rgba(255,255,255,.5); background: rgba(0,0,0,.45); color: #fff; font-size: 1.3rem; cursor: pointer; flex: none; }
+  .g-bas { position: absolute; bottom: 0; left: 0; right: 0; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px; padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(0deg, rgba(0,0,0,.7), rgba(0,0,0,0)); }
+  .g-points { display: flex; gap: 8px; align-items: center; }
+  .g-points i { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,.4); display: block; }
+  .g-points i.actif { background: var(--jaune); transform: scale(1.3); }
+  button:focus-visible { outline: 4px solid #8ab4ff; outline-offset: 2px; }
+  textarea:focus-visible, input:focus-visible { outline: 4px solid #8ab4ff; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<div class="bande" aria-hidden="true"></div>
+<header>
+  <span class="point" aria-hidden="true"></span>
+  <h1>Super Brazza</h1>
+  <button type="button" class="crayon" id="crayon" aria-label="Changer mon prénom et mon âge">✏️</button>
+  <span class="pts">★ <b id="pts">0</b> pts</span>
+</header>
+
+<main>
+  <!-- ACCUEIL -->
+  <section class="vue" id="v-accueil">
+    <p class="salut" id="salut"></p>
+    <div class="cadre-video">
+      <div class="boite-video">
+        <video id="video" src="video-vert.mp4" poster="poster-vert.jpg" muted loop autoplay playsinline preload="auto"></video>
+        <button type="button" class="lecture" id="lecture" aria-label="Lancer la vidéo" hidden>▶</button>
+      </div>
+    </div>
+    <button type="button" class="btn-ecouter" id="btn-ecouter">🔊 Écouter Super Brazza</button>
+    <div class="grille" id="grille"></div>
+    <div class="carte-maillots">
+      <div class="tete"><b>Mes maillots</b><span>CONGO</span></div>
+      <div class="maillots" id="maillots"></div>
+      <p class="prochain" id="prochain"></p>
+    </div>
+  </section>
+
+  <!-- CHAT -->
+  <section class="vue" id="v-chat" hidden>
+    <div class="scene">
+      <img id="mascotte" src="brazza-vert.png" alt="Super Brazza">
+      <div class="bulle" id="reponse" aria-live="polite"></div>
+    </div>
+    <div class="voixbar">
+      <button type="button" class="mini" id="voix"></button>
+      <button type="button" class="mini" id="reecouter">🔁 Réécouter</button>
+    </div>
+    <p class="compteur" id="compteur"></p>
+    <label for="question" class="info">Ta question</label>
+    <textarea id="question" maxlength="300" placeholder="Écris ou dis ta question…"></textarea>
+    <div class="actions">
+      <button type="button" id="micro">🎤 Parler</button>
+      <button type="button" id="envoyer">Demander</button>
+    </div>
+    <p class="cahier" id="cahier" hidden>✏️ Recopie la réponse dans ton cahier pour bien la comprendre.</p>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="vue" id="v-quiz" hidden>
+    <button type="button" class="retour" id="quiz-retour">← Retour</button>
+    <div id="quiz-zone"></div>
+  </section>
+
+  <!-- NOTRE ÉQUIPE -->
+  <section class="vue" id="v-equipe" hidden>
+    <button type="button" class="retour" id="equipe-retour">← Retour</button>
+    <img class="saga" src="equipe-saga.jpg" alt="Super Braza, la saga : le singe, le gorille, le léopard, le lion et l’éléphant en maillot du Congo">
+    <div class="quiz-carte" id="equipe-resume"></div>
+    <button type="button" class="gros" id="btn-partager">📣 Partager mon équipe</button>
+  </section>
+
+  <!-- GALERIE D'AMBIANCE (plein écran) -->
+  <section class="galerie" id="v-galerie" hidden aria-label="Galerie d’ambiance">
+    <div class="glisse" id="glisse"></div>
+    <div class="g-haut">
+      <button type="button" class="g-btn" id="g-fermer" aria-label="Fermer la galerie">✕</button>
+      <div class="g-titre" id="g-titre"></div>
+      <div class="g-statut" id="g-statut"></div>
+    </div>
+    <div class="g-bas">
+      <button type="button" class="g-btn" id="g-prec" aria-label="Vidéo précédente">‹</button>
+      <div class="g-points" id="g-points"></div>
+      <button type="button" class="g-btn" id="g-son" aria-label="Son">🔇</button>
+      <button type="button" class="g-btn" id="g-suiv" aria-label="Vidéo suivante">›</button>
+    </div>
+  </section>
+
+  <!-- BIENTÔT -->
+  <section class="vue" id="v-bientot" hidden>
+    <button type="button" class="retour" id="retour">← Retour</button>
+    <div class="bientot">
+      <img id="img-bientot" src="brazza-vert.png" alt="">
+      <h2 id="bientot-titre"></h2>
+      <p>Cette rubrique arrive bientôt. Super Brazza la prépare !</p>
+    </div>
+  </section>
+</main>
+
+<nav aria-label="Menu">
+  <button type="button" data-nav="accueil" aria-current="page"><span class="emoji">🏠</span><small>Accueil</small></button>
+  <button type="button" data-nav="quiz"><span class="emoji">🧠</span><small>Quiz</small></button>
+  <button type="button" data-nav="histoire"><span class="emoji">🌙</span><small>Histoires</small></button>
+  <button type="button" data-nav="chat"><span class="emoji">💬</span><small>Brazza</small></button>
+</nav>
+
+<!-- Fenêtre prénom / âge -->
+<div class="voile" id="voile" hidden>
+  <div class="modale" role="dialog" aria-modal="true" aria-labelledby="m-titre">
+    <img src="logo-rond.png" alt="">
+    <h2 id="m-titre">Comment tu t’appelles ?</h2>
+    <p>Super Brazza veut connaître ton prénom pour bien t’accueillir !</p>
+    <input id="prenom" type="text" maxlength="20" autocomplete="off" placeholder="Ton prénom" aria-label="Ton prénom">
+    <p class="q">Quel âge as-tu ?</p>
+    <div class="ages" id="ages">
+      <button type="button" data-age="4-6" aria-pressed="false">4-6</button>
+      <button type="button" data-age="7-9" aria-pressed="false">7-9</button>
+      <button type="button" data-age="10-12" aria-pressed="false">10-12</button>
+    </div>
+    <p class="erreur" id="erreur-profil" aria-live="polite"></p>
+    <button type="button" class="go" id="go">C’est parti !</button>
+    <button type="button" class="lien" id="fermer" hidden>Fermer</button>
+  </div>
+</div>
+
+<!-- Partager mon équipe -->
+<div class="voile bas" id="partage" hidden>
+  <div class="feuille" role="dialog" aria-modal="true" aria-labelledby="p-titre">
+    <h2 id="p-titre">Partager mon équipe</h2>
+    <p class="apercu" id="p-texte"></p>
+    <button type="button" class="p-btn wa" id="p-wa">WhatsApp</button>
+    <button type="button" class="p-btn fb" id="p-fb">Facebook</button>
+    <button type="button" class="p-btn tg" id="p-tg">Telegram</button>
+    <button type="button" class="p-btn" id="p-sys">📲 Autres applications…</button>
+    <button type="button" class="p-btn" id="p-copier">🔗 Copier le lien</button>
+    <button type="button" class="lien" id="p-fermer">Fermer</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script id="donnees-quiz">
+/*QUIZ_DATA_START*/
+// Banque de questions Super Brazza — Quiz Congo (290 questions). n = niveau (1 facile 4-6 ans, 2 moyen 7-9 ans, 3 difficile 10-12 ans).
+var QUIZ_CATEGORIES = [{"id": "symboles", "e": "🇨🇬", "t": "Symboles du Congo"}, {"id": "geo", "e": "🗺️", "t": "Géographie"}, {"id": "nature", "e": "🦍", "t": "Nature et animaux"}, {"id": "histoire", "e": "📜", "t": "Histoire"}, {"id": "monuments", "e": "🏛️", "t": "Monuments et villes"}, {"id": "sites", "e": "🏞️", "t": "Sites à découvrir"}, {"id": "culture", "e": "🎶", "t": "Culture et musique"}, {"id": "langues", "e": "🗣️", "t": "Lingala"}, {"id": "cuisine", "e": "🍲", "t": "Cuisine"}, {"id": "sport", "e": "⚽", "t": "Sport"}, {"id": "economie", "e": "🚂", "t": "Économie et transports"}];
+var QUIZ_CONGO = [
+  {"id": "symboles-001", "c": "symboles", "n": 1, "q": "Comment s’appelle la capitale du Congo ?", "r": ["Brazzaville", "Pointe-Noire", "Dolisie"], "ok": 0, "info": "Brazzaville est la capitale du Congo."},
+  {"id": "symboles-002", "c": "symboles", "n": 1, "q": "Quelles sont les couleurs du drapeau du Congo ?", "r": ["Vert, jaune et rouge", "Bleu, blanc et rouge", "Noir, jaune et vert"], "ok": 0, "info": "Le drapeau du Congo est vert, jaune et rouge."},
+  {"id": "symboles-003", "c": "symboles", "n": 1, "q": "Combien de couleurs y a-t-il sur le drapeau du Congo ?", "r": ["Trois", "Deux", "Cinq"], "ok": 0, "info": "Le drapeau du Congo a trois couleurs : vert, jaune et rouge."},
+  {"id": "symboles-004", "c": "symboles", "n": 1, "q": "Sur quel continent se trouve le Congo ?", "r": ["En Afrique", "En Europe", "En Asie"], "ok": 0, "info": "Le Congo est un pays d’Afrique centrale."},
+  {"id": "symboles-005", "c": "symboles", "n": 1, "q": "Comment s’appellent les habitants du Congo ?", "r": ["Les Congolais", "Les Gabonais", "Les Camerounais"], "ok": 0, "info": "Les habitants du Congo s’appellent les Congolais."},
+  {"id": "symboles-006", "c": "symboles", "n": 2, "q": "Comment s’appelle l’hymne national du Congo ?", "r": ["La Congolaise", "La Marseillaise", "Debout Congolais"], "ok": 0, "info": "L’hymne national du Congo s’appelle La Congolaise."},
+  {"id": "symboles-007", "c": "symboles", "n": 2, "q": "Quel jour fête-t-on l’indépendance du Congo ?", "r": ["Le 15 août", "Le 1er janvier", "Le 14 juillet"], "ok": 0, "info": "Le Congo fête son indépendance le 15 août."},
+  {"id": "symboles-008", "c": "symboles", "n": 2, "q": "Quelle est la langue officielle du Congo ?", "r": ["Le français", "L’anglais", "L’espagnol"], "ok": 0, "info": "La langue officielle du Congo est le français."},
+  {"id": "symboles-009", "c": "symboles", "n": 2, "q": "Quelle monnaie utilise-t-on au Congo ?", "r": ["Le franc CFA", "L’euro", "Le dollar"], "ok": 0, "info": "Au Congo, on utilise le franc CFA."},
+  {"id": "symboles-010", "c": "symboles", "n": 2, "q": "Quelle est la devise du Congo ?", "r": ["Unité, Travail, Progrès", "Liberté, Égalité, Fraternité", "Paix, Amour, Joie"], "ok": 0, "info": "La devise du Congo est Unité, Travail, Progrès."},
+  {"id": "symboles-011", "c": "symboles", "n": 3, "q": "Comment sont placées les bandes de couleur sur le drapeau du Congo ?", "r": ["En diagonale", "À l’horizontale", "À la verticale"], "ok": 0, "info": "Les trois couleurs du drapeau du Congo sont en diagonale."},
+  {"id": "symboles-012", "c": "symboles", "n": 3, "q": "Quel pays porte presque le même nom que le Congo, de l’autre côté du fleuve ?", "r": ["La République démocratique du Congo", "Le Gabon", "L’Angola"], "ok": 0, "info": "De l’autre côté du fleuve Congo, il y a la République démocratique du Congo."},
+  {"id": "geo-001", "c": "geo", "n": 1, "q": "Quel océan borde le Congo ?", "r": ["L’océan Atlantique", "L’océan Indien", "L’océan Pacifique"], "ok": 0, "info": "Le Congo a une côte sur l’océan Atlantique."},
+  {"id": "geo-002", "c": "geo", "n": 1, "q": "Quel grand fleuve passe à côté de Brazzaville ?", "r": ["Le fleuve Congo", "Le Nil", "La Seine"], "ok": 0, "info": "Le fleuve Congo passe juste à côté de Brazzaville."},
+  {"id": "geo-003", "c": "geo", "n": 1, "q": "Quelle grande ville du Congo est au bord de l’océan ?", "r": ["Pointe-Noire", "Ouesso", "Owando"], "ok": 0, "info": "Pointe-Noire est au bord de l’océan Atlantique."},
+  {"id": "geo-004", "c": "geo", "n": 1, "q": "Que trouve-t-on sur la plus grande partie du Congo ?", "r": ["Des forêts", "Des déserts", "De la neige"], "ok": 0, "info": "Une grande partie du Congo est couverte de forêts."},
+  {"id": "geo-005", "c": "geo", "n": 2, "q": "Quelle ville se trouve en face de Brazzaville, de l’autre côté du fleuve ?", "r": ["Kinshasa", "Libreville", "Luanda"], "ok": 0, "info": "Kinshasa est en face de Brazzaville, de l’autre côté du fleuve Congo."},
+  {"id": "geo-006", "c": "geo", "n": 2, "q": "Combien de pays voisins le Congo a-t-il ?", "r": ["Cinq", "Deux", "Huit"], "ok": 0, "info": "Le Congo a cinq voisins : le Gabon, le Cameroun, la Centrafrique, la RDC et l’Angola."},
+  {"id": "geo-007", "c": "geo", "n": 2, "q": "Quel pays voisin du Congo est à l’ouest ?", "r": ["Le Gabon", "L’Égypte", "Le Maroc"], "ok": 0, "info": "Le Gabon est voisin du Congo, à l’ouest."},
+  {"id": "geo-008", "c": "geo", "n": 2, "q": "Quelle ligne imaginaire passe par le nord du Congo ?", "r": ["L’équateur", "Le cercle polaire", "Le tropique du Capricorne"], "ok": 0, "info": "L’équateur traverse le Congo."},
+  {"id": "geo-009", "c": "geo", "n": 2, "q": "Après quel fleuve le fleuve Congo est-il le plus puissant du monde ?", "r": ["L’Amazone", "Le Nil", "Le Mississippi"], "ok": 0, "info": "Le fleuve Congo est le plus puissant du monde après l’Amazone."},
+  {"id": "geo-010", "c": "geo", "n": 3, "q": "Quelle est la capitale économique du Congo ?", "r": ["Pointe-Noire", "Brazzaville", "Dolisie"], "ok": 0, "info": "Pointe-Noire est la capitale économique du Congo."},
+  {"id": "geo-011", "c": "geo", "n": 3, "q": "Quel est le chef-lieu du département du Pool ?", "r": ["Kinkala", "Dolisie", "Sibiti"], "ok": 0, "info": "Kinkala est le chef-lieu du département du Pool."},
+  {"id": "geo-012", "c": "geo", "n": 3, "q": "Quel est le chef-lieu du département de la Sangha ?", "r": ["Ouesso", "Impfondo", "Owando"], "ok": 0, "info": "Ouesso est le chef-lieu du département de la Sangha."},
+  {"id": "geo-013", "c": "geo", "n": 3, "q": "Quel est le chef-lieu du département de la Likouala ?", "r": ["Impfondo", "Ouesso", "Madingou"], "ok": 0, "info": "Impfondo est le chef-lieu du département de la Likouala."},
+  {"id": "geo-014", "c": "geo", "n": 3, "q": "Quel est le chef-lieu du département de la Cuvette ?", "r": ["Owando", "Ewo", "Sibiti"], "ok": 0, "info": "Owando est le chef-lieu du département de la Cuvette."},
+  {"id": "geo-015", "c": "geo", "n": 3, "q": "Quel est le chef-lieu du département du Niari ?", "r": ["Dolisie", "Kinkala", "Ewo"], "ok": 0, "info": "Dolisie est le chef-lieu du département du Niari."},
+  {"id": "geo-016", "c": "geo", "n": 3, "q": "Quel est le chef-lieu du département de la Bouenza ?", "r": ["Madingou", "Hinda", "Owando"], "ok": 0, "info": "Madingou est le chef-lieu du département de la Bouenza."},
+  {"id": "geo-017", "c": "geo", "n": 3, "q": "Quel est le chef-lieu du département de la Lékoumou ?", "r": ["Sibiti", "Ewo", "Madingou"], "ok": 0, "info": "Sibiti est le chef-lieu du département de la Lékoumou."},
+  {"id": "geo-018", "c": "geo", "n": 3, "q": "Quel est le point le plus haut du Congo ?", "r": ["Le mont Nabemba", "Le Kilimandjaro", "Le mont Blanc"], "ok": 0, "info": "Le mont Nabemba est le point le plus haut du Congo."},
+  {"id": "geo-019", "c": "geo", "n": 3, "q": "Quelle chaîne de montagnes se trouve non loin de la côte du Congo ?", "r": ["Le Mayombe", "L’Himalaya", "Les Alpes"], "ok": 0, "info": "Le massif du Mayombe se trouve à environ 80 kilomètres de la côte."},
+  {"id": "geo-020", "c": "geo", "n": 3, "q": "Comment s’appelle une rivière du nord du Congo qui donne aussi son nom à un département ?", "r": ["La Sangha", "La Loire", "Le Rhône"], "ok": 0, "info": "La Sangha est une rivière du nord du Congo, et aussi un département."},
+  {"id": "nature-001", "c": "nature", "n": 1, "q": "Quel gros animal à poils noirs vit dans les forêts du nord du Congo ?", "r": ["Le gorille", "Le lion", "Le pingouin"], "ok": 0, "info": "Le gorille vit dans les grandes forêts du nord du Congo."},
+  {"id": "nature-002", "c": "nature", "n": 1, "q": "Quel animal à trompe vit dans les forêts du Congo ?", "r": ["L’éléphant de forêt", "Le kangourou", "Le panda"], "ok": 0, "info": "L’éléphant de forêt vit dans les forêts du Congo."},
+  {"id": "nature-003", "c": "nature", "n": 1, "q": "Quel animal, cousin de l’homme, vit dans la forêt du Congo ?", "r": ["Le chimpanzé", "Le zèbre", "Le kangourou"], "ok": 0, "info": "Le chimpanzé vit dans les forêts du Congo."},
+  {"id": "nature-004", "c": "nature", "n": 1, "q": "Quel est le climat du Congo ?", "r": ["Chaud et humide", "Très froid", "Désertique"], "ok": 0, "info": "Le Congo a un climat tropical, chaud et humide."},
+  {"id": "nature-005", "c": "nature", "n": 2, "q": "Comment s’appelle le grand parc du nord du Congo, célèbre pour ses gorilles ?", "r": ["Nouabalé-Ndoki", "Yellowstone", "Disneyland"], "ok": 0, "info": "Le parc national de Nouabalé-Ndoki abrite des gorilles et des éléphants de forêt."},
+  {"id": "nature-006", "c": "nature", "n": 2, "q": "Quel parc du Congo se trouve sur la côte, près de l’océan Atlantique ?", "r": ["Conkouati-Douli", "Odzala-Kokoua", "Nouabalé-Ndoki"], "ok": 0, "info": "Le parc de Conkouati-Douli est un parc de la côte atlantique."},
+  {"id": "nature-007", "c": "nature", "n": 2, "q": "Quelle forêt est appelée le premier poumon vert de la planète, avant celle du Congo ?", "r": ["L’Amazonie", "La Sibérie", "Le Sahara"], "ok": 0, "info": "La forêt du bassin du Congo est le deuxième poumon vert de la planète, après l’Amazonie."},
+  {"id": "nature-008", "c": "nature", "n": 2, "q": "Quel oiseau gris, capable d’imiter la voix des humains, vit dans les forêts d’Afrique centrale ?", "r": ["Le perroquet gris", "Le pingouin", "L’autruche"], "ok": 0, "info": "Le perroquet gris sait imiter la voix des humains."},
+  {"id": "nature-009", "c": "nature", "n": 3, "q": "Le parc de Nouabalé-Ndoki fait partie d’un site UNESCO partagé par trois pays. Lesquels ?", "r": ["Le Congo, le Cameroun et la Centrafrique", "Le Congo, le Gabon et l’Angola", "Le Congo, le Tchad et le Niger"], "ok": 0, "info": "Le Trinational de la Sangha réunit le Congo, le Cameroun et la Centrafrique."},
+  {"id": "nature-010", "c": "nature", "n": 3, "q": "Quel animal doux vit dans la lagune du parc de Conkouati-Douli ?", "r": ["Le lamantin", "L’ours polaire", "Le pingouin"], "ok": 0, "info": "Le lamantin vit dans la lagune de Conkouati-Douli."},
+  {"id": "nature-011", "c": "nature", "n": 3, "q": "Quelle grosse tortue de mer vient pondre sur la côte du Congo ?", "r": ["La tortue luth", "La tortue de Floride", "La tortue des steppes"], "ok": 0, "info": "La tortue luth est la plus grosse tortue de mer et elle vient sur la côte du Congo."},
+  {"id": "nature-012", "c": "nature", "n": 3, "q": "En quelle année Nouabalé-Ndoki est-il entré au patrimoine mondial de l’UNESCO, avec le Trinational de la Sangha ?", "r": ["2012", "1960", "1990"], "ok": 0, "info": "Le Trinational de la Sangha est inscrit au patrimoine mondial depuis 2012."},
+  {"id": "histoire-001", "c": "histoire", "n": 2, "q": "En quelle année le Congo est-il devenu indépendant ?", "r": ["1960", "1990", "1860"], "ok": 0, "info": "Le Congo est devenu indépendant le 15 août 1960."},
+  {"id": "histoire-002", "c": "histoire", "n": 2, "q": "De quel pays le Congo a-t-il obtenu son indépendance ?", "r": ["De la France", "De l’Angleterre", "Du Portugal"], "ok": 0, "info": "Le Congo était une colonie française avant 1960."},
+  {"id": "histoire-003", "c": "histoire", "n": 2, "q": "Quel explorateur a donné son nom à Brazzaville ?", "r": ["Pierre Savorgnan de Brazza", "David Livingstone", "Christophe Colomb"], "ok": 0, "info": "Brazzaville porte le nom de l’explorateur Pierre Savorgnan de Brazza."},
+  {"id": "histoire-004", "c": "histoire", "n": 2, "q": "Dans quelle ville l’indépendance du Congo a-t-elle été proclamée ?", "r": ["À Brazzaville", "À Pointe-Noire", "À Paris"], "ok": 0, "info": "L’indépendance du Congo a été proclamée à Brazzaville le 15 août 1960."},
+  {"id": "histoire-005", "c": "histoire", "n": 3, "q": "En quelle année Brazza a-t-il signé un traité avec le roi Makoko ?", "r": ["1880", "1920", "1960"], "ok": 0, "info": "Le traité entre Brazza et le roi Makoko a été signé en 1880."},
+  {"id": "histoire-006", "c": "histoire", "n": 3, "q": "Comment s’appelait le roi des Tékés qui a signé un traité avec Brazza ?", "r": ["Le roi Makoko", "Le roi Soleil", "Le roi Lion"], "ok": 0, "info": "Le roi des Tékés, appelé le Makoko, a signé un traité avec Brazza."},
+  {"id": "histoire-007", "c": "histoire", "n": 3, "q": "Quel nom portait le poste créé par Brazza, devenu ensuite Brazzaville ?", "r": ["Mfoa", "Loango", "Makoko"], "ok": 0, "info": "Le poste de Mfoa, créé en 1880, est devenu Brazzaville."},
+  {"id": "histoire-008", "c": "histoire", "n": 3, "q": "Qui fut le premier président du Congo après l’indépendance ?", "r": ["Fulbert Youlou", "Marien Ngouabi", "Pascal Lissouba"], "ok": 0, "info": "Fulbert Youlou fut le premier président du Congo."},
+  {"id": "histoire-009", "c": "histoire", "n": 3, "q": "Pendant la Seconde Guerre mondiale, Brazzaville est devenue la capitale de quoi ?", "r": ["De la France libre", "De l’Allemagne", "Du Japon"], "ok": 0, "info": "Brazzaville a été la capitale de la France libre de 1940 à 1943."},
+  {"id": "histoire-010", "c": "histoire", "n": 3, "q": "Quel général français a installé la France libre à Brazzaville ?", "r": ["Charles de Gaulle", "Napoléon", "Louis XIV"], "ok": 0, "info": "Le général de Gaulle a choisi Brazzaville comme capitale de la France libre."},
+  {"id": "histoire-011", "c": "histoire", "n": 3, "q": "En quelle année la Conférence de Brazzaville a-t-elle eu lieu ?", "r": ["1944", "1914", "1960"], "ok": 0, "info": "La Conférence de Brazzaville s’est tenue en 1944."},
+  {"id": "histoire-012", "c": "histoire", "n": 3, "q": "Quel chemin de fer, terminé en 1934, relie Brazzaville à Pointe-Noire ?", "r": ["Le Congo-Océan", "Le Transsibérien", "L’Orient-Express"], "ok": 0, "info": "Le chemin de fer Congo-Océan a été construit de 1924 à 1934."},
+  {"id": "histoire-013", "c": "histoire", "n": 3, "q": "De quel grand ensemble de colonies françaises Brazzaville a-t-elle été la capitale ?", "r": ["L’Afrique-Équatoriale française", "L’Afrique-Occidentale française", "L’Indochine française"], "ok": 0, "info": "Brazzaville a été la capitale de l’Afrique-Équatoriale française."},
+  {"id": "langues-001", "c": "langues", "n": 1, "q": "Comment dit-on « bonjour » en lingala ?", "r": ["Mbote", "Hello", "Hola"], "ok": 0, "info": "En lingala, on dit « mbote » pour dire bonjour."},
+  {"id": "culture-001", "c": "culture", "n": 1, "q": "Quel instrument à peau, que l’on frappe avec les mains, accompagne beaucoup de danses africaines ?", "r": ["Le tambour", "Le violon", "La flûte traversière"], "ok": 0, "info": "Le tambour accompagne beaucoup de danses africaines."},
+  {"id": "culture-002", "c": "culture", "n": 2, "q": "Quelle musique, née autour du fleuve Congo, fait danser toute l’Afrique ?", "r": ["La rumba congolaise", "Le tango", "Le jazz"], "ok": 0, "info": "La rumba congolaise est née autour du fleuve Congo."},
+  {"id": "culture-003", "c": "culture", "n": 2, "q": "Quelles deux villes sont le berceau de la rumba congolaise ?", "r": ["Brazzaville et Kinshasa", "Paris et Londres", "Dakar et Abidjan"], "ok": 0, "info": "La rumba congolaise est née à Brazzaville et à Kinshasa."},
+  {"id": "culture-004", "c": "culture", "n": 2, "q": "En quelle année la rumba congolaise est-elle entrée au patrimoine de l’UNESCO ?", "r": ["2021", "1960", "2000"], "ok": 0, "info": "L’UNESCO a reconnu la rumba congolaise en décembre 2021."},
+  {"id": "culture-005", "c": "culture", "n": 2, "q": "Que veut dire la SAPE, célèbre à Brazzaville ?", "r": ["L’art de s’habiller avec élégance", "Un sport de combat", "Un plat traditionnel"], "ok": 0, "info": "La SAPE, c’est la Société des Ambianceurs et des Personnes Élégantes."},
+  {"id": "culture-006", "c": "culture", "n": 2, "q": "Comment appelle-t-on les personnes très élégantes de la SAPE ?", "r": ["Les sapeurs", "Les marins", "Les boulangers"], "ok": 0, "info": "Les passionnés de la SAPE s’appellent les sapeurs."},
+  {"id": "culture-007", "c": "culture", "n": 2, "q": "Quelles sont les deux langues nationales du Congo, à côté du français ?", "r": ["Le lingala et le kituba", "Le swahili et le zoulou", "Le wolof et le peul"], "ok": 0, "info": "Le lingala et le kituba sont les deux langues nationales du Congo."},
+  {"id": "culture-008", "c": "culture", "n": 3, "q": "Quelle langue parle-t-on surtout à Brazzaville et dans le nord du Congo ?", "r": ["Le lingala", "Le kituba", "Le zoulou"], "ok": 0, "info": "On parle surtout le lingala à Brazzaville et dans le nord."},
+  {"id": "culture-009", "c": "culture", "n": 3, "q": "Quelle langue parle-t-on surtout à Pointe-Noire et dans le sud du Congo ?", "r": ["Le kituba", "Le lingala", "Le zoulou"], "ok": 0, "info": "On parle surtout le kituba à Pointe-Noire et dans le sud."},
+  {"id": "culture-010", "c": "culture", "n": 3, "q": "Comment s’appelle le grand festival de musique africaine de Brazzaville ?", "r": ["Le FESPAM", "Le Carnaval de Rio", "Le Festival de Cannes"], "ok": 0, "info": "Le FESPAM est le Festival panafricain de musique, à Brazzaville."},
+  {"id": "culture-011", "c": "culture", "n": 3, "q": "Brazzaville est « ville créative » de l’UNESCO pour quel art ?", "r": ["La musique", "La cuisine", "Le cinéma"], "ok": 0, "info": "L’UNESCO a reconnu Brazzaville comme ville créative pour la musique."},
+  {"id": "culture-012", "c": "culture", "n": 3, "q": "Quelle grande église de Brazzaville porte le nom d’une sainte ?", "r": ["La basilique Sainte-Anne du Congo", "Notre-Dame de Paris", "Saint-Pierre de Rome"], "ok": 0, "info": "La basilique Sainte-Anne du Congo se trouve à Brazzaville."},
+  {"id": "culture-013", "c": "culture", "n": 3, "q": "Quel nom donne-t-on aussi au kituba ?", "r": ["Le munukutuba", "Le wolof", "Le zoulou"], "ok": 0, "info": "Le kituba est aussi appelé munukutuba."},
+  {"id": "culture-014", "c": "culture", "n": 2, "q": "Lequel de ces noms est un quartier de Brazzaville ?", "r": ["Poto-Poto", "Montmartre", "Manhattan"], "ok": 0, "info": "Poto-Poto est un quartier de Brazzaville."},
+  {"id": "cuisine-001", "c": "cuisine", "n": 1, "q": "Avec quoi prépare-t-on le saka-saka ?", "r": ["Des feuilles de manioc", "Du chocolat", "Des pommes"], "ok": 0, "info": "Le saka-saka est un plat fait avec des feuilles de manioc pilées."},
+  {"id": "cuisine-002", "c": "cuisine", "n": 1, "q": "Quelle racine très importante au Congo sert à faire la chikwangue ?", "r": ["Le manioc", "La carotte", "La betterave"], "ok": 0, "info": "La chikwangue est faite avec du manioc."},
+  {"id": "cuisine-003", "c": "cuisine", "n": 2, "q": "Qu’est-ce que la chikwangue ?", "r": ["Un pain de manioc cuit dans des feuilles", "Un gâteau au chocolat", "Un poisson fumé"], "ok": 0, "info": "La chikwangue est une pâte de manioc cuite à la vapeur dans des feuilles."},
+  {"id": "cuisine-004", "c": "cuisine", "n": 2, "q": "Avec quoi prépare-t-on la sauce du poulet à la moambe ?", "r": ["Des noix de palme", "Du chocolat", "Du lait"], "ok": 0, "info": "La moambe est une sauce faite avec la pulpe de noix de palme."},
+  {"id": "cuisine-005", "c": "cuisine", "n": 2, "q": "Qu’est-ce que le maboké ?", "r": ["Du poisson cuit à l’étouffée dans des feuilles", "Une danse", "Un jeu de ballon"], "ok": 0, "info": "Le maboké est un poisson épicé cuit à l’étouffée dans de grandes feuilles."},
+  {"id": "cuisine-006", "c": "cuisine", "n": 2, "q": "Avec quoi sert-on souvent le saka-saka ?", "r": ["Du riz, du foufou ou de la chikwangue", "Des bonbons", "De la glace"], "ok": 0, "info": "On mange souvent le saka-saka avec du riz, du foufou ou de la chikwangue."},
+  {"id": "cuisine-007", "c": "cuisine", "n": 3, "q": "Comment appelle-t-on la pâte de manioc que l’on mange avec les sauces ?", "r": ["Le foufou", "Le couscous", "La polenta"], "ok": 0, "info": "Le foufou est une pâte de manioc."},
+  {"id": "cuisine-008", "c": "cuisine", "n": 3, "q": "Quel plat de feuilles de manioc est l’un des plats les plus connus du Congo ?", "r": ["Le saka-saka", "La ratatouille", "La paella"], "ok": 0, "info": "Le saka-saka est l’un des plats les plus connus du Congo."},
+  {"id": "sport-001", "c": "sport", "n": 1, "q": "Comment s’appelle l’équipe nationale de football du Congo ?", "r": ["Les Diables Rouges", "Les Lions", "Les Éléphants"], "ok": 0, "info": "Les Diables Rouges, c’est le nom de l’équipe de football du Congo."},
+  {"id": "sport-002", "c": "sport", "n": 1, "q": "Quel sport est le plus populaire au Congo ?", "r": ["Le football", "Le hockey sur glace", "Le ski"], "ok": 0, "info": "Le football est le sport le plus populaire au Congo."},
+  {"id": "sport-003", "c": "sport", "n": 2, "q": "En quelle année le Congo a-t-il gagné la Coupe d’Afrique des nations de football ?", "r": ["1972", "1992", "2012"], "ok": 0, "info": "Le Congo a gagné la Coupe d’Afrique des nations en 1972."},
+  {"id": "sport-004", "c": "sport", "n": 2, "q": "Quel est le nom d’un grand stade de Brazzaville ?", "r": ["Le stade Alphonse-Massamba-Débat", "Le Stade de France", "Wembley"], "ok": 0, "info": "Le stade Alphonse-Massamba-Débat se trouve à Brazzaville."},
+  {"id": "sport-005", "c": "sport", "n": 3, "q": "Contre quelle équipe le Congo a-t-il gagné la finale de la CAN 1972 ?", "r": ["Le Mali", "Le Ghana", "Le Maroc"], "ok": 0, "info": "Le Congo a battu le Mali 3 à 2 en finale de la CAN 1972."},
+  {"id": "sport-006", "c": "sport", "n": 3, "q": "Dans quel pays se jouait la CAN 1972 ?", "r": ["Au Cameroun", "Au Gabon", "En Égypte"], "ok": 0, "info": "La CAN 1972 s’est jouée au Cameroun, et la finale à Yaoundé."},
+  {"id": "sport-007", "c": "sport", "n": 3, "q": "Quel footballeur congolais, numéro 10, a gagné la CAN 1972 puis joué au PSG ?", "r": ["François M’Pelé", "Pelé", "Maradona"], "ok": 0, "info": "François M’Pelé a gagné la CAN 1972 avec le Congo puis a joué à Paris."},
+  {"id": "sport-008", "c": "sport", "n": 3, "q": "Quelle grande compétition sportive africaine a eu lieu à Brazzaville en 1965 ?", "r": ["Les premiers Jeux africains", "La Coupe du monde", "Les Jeux olympiques"], "ok": 0, "info": "Les premiers Jeux africains ont eu lieu à Brazzaville en 1965."},
+  {"id": "symboles-013", "c": "symboles", "n": 1, "q": "Brazzaville est la capitale de quel pays ?", "r": ["Du Congo", "Du Gabon", "Du Cameroun"], "ok": 0, "info": "Brazzaville est la capitale du Congo."},
+  {"id": "symboles-014", "c": "symboles", "n": 2, "q": "Quel est le nom officiel du pays dont Brazzaville est la capitale ?", "r": ["La République du Congo", "La République démocratique du Congo", "La République du Gabon"], "ok": 0, "info": "Le nom officiel du pays est la République du Congo."},
+  {"id": "symboles-015", "c": "symboles", "n": 1, "q": "Quelles sont les deux plus grandes villes du Congo ?", "r": ["Brazzaville et Pointe-Noire", "Dolisie et Ouesso", "Owando et Ewo"], "ok": 0, "info": "Brazzaville et Pointe-Noire sont les deux plus grandes villes du Congo."},
+  {"id": "geo-021", "c": "geo", "n": 2, "q": "Quelle est la capitale du Gabon, pays voisin du Congo ?", "r": ["Libreville", "Yaoundé", "Bangui"], "ok": 0, "info": "Libreville est la capitale du Gabon."},
+  {"id": "geo-022", "c": "geo", "n": 2, "q": "Quelle est la capitale du Cameroun, pays voisin du Congo ?", "r": ["Yaoundé", "Libreville", "Kinshasa"], "ok": 0, "info": "Yaoundé est la capitale du Cameroun."},
+  {"id": "geo-023", "c": "geo", "n": 3, "q": "Quelle est la capitale de la République centrafricaine, pays voisin du Congo ?", "r": ["Bangui", "Yaoundé", "Libreville"], "ok": 0, "info": "Bangui est la capitale de la République centrafricaine."},
+  {"id": "geo-024", "c": "geo", "n": 2, "q": "Quelle est la capitale de la République démocratique du Congo ?", "r": ["Kinshasa", "Brazzaville", "Luanda"], "ok": 0, "info": "Kinshasa est la capitale de la République démocratique du Congo."},
+  {"id": "geo-025", "c": "geo", "n": 3, "q": "Quelle région d’Angola, séparée du reste du pays, touche le Congo au sud ?", "r": ["Le Cabinda", "Le Katanga", "Le Kivu"], "ok": 0, "info": "Le Cabinda est une région d’Angola qui touche le sud du Congo."},
+  {"id": "geo-026", "c": "geo", "n": 3, "q": "Environ quelle est la superficie du Congo ?", "r": ["342 000 km²", "34 200 km²", "3 420 000 km²"], "ok": 0, "info": "Le Congo couvre environ 342 000 kilomètres carrés."},
+  {"id": "geo-027", "c": "geo", "n": 3, "q": "Environ combien de kilomètres mesure la côte atlantique du Congo ?", "r": ["170 km", "1 700 km", "17 km"], "ok": 0, "info": "La côte du Congo sur l’océan Atlantique mesure environ 170 kilomètres."},
+  {"id": "geo-028", "c": "geo", "n": 3, "q": "Quel affluent du fleuve Congo coule dans le nord-est du pays ?", "r": ["L’Oubangui", "Le Nil", "Le Niger"], "ok": 0, "info": "L’Oubangui rejoint le fleuve Congo, dans le nord-est du pays."},
+  {"id": "geo-029", "c": "geo", "n": 3, "q": "Quel fleuve du sud du Congo se jette dans l’océan Atlantique ?", "r": ["Le Kouilou-Niari", "Le Nil", "Le Danube"], "ok": 0, "info": "Le Kouilou-Niari est l’un des deux grands fleuves du Congo, avec le fleuve Congo."},
+  {"id": "geo-030", "c": "geo", "n": 3, "q": "Comment s’appelle l’élargissement du fleuve Congo entre Brazzaville et Kinshasa ?", "r": ["Le Pool Malebo", "Le lac Victoria", "Le lac Tchad"], "ok": 0, "info": "Entre Brazzaville et Kinshasa, le fleuve Congo s’élargit en un grand bassin, le Pool Malebo."},
+  {"id": "geo-031", "c": "geo", "n": 3, "q": "Quel massif de montagnes se trouve dans la région du Niari ?", "r": ["Le massif du Chaillu", "Les Pyrénées", "Le Mont-Blanc"], "ok": 0, "info": "Le massif du Chaillu se trouve dans la région du Niari."},
+  {"id": "geo-032", "c": "geo", "n": 3, "q": "Dans quel département se trouve le lac Télé ?", "r": ["La Likouala", "Le Kouilou", "La Bouenza"], "ok": 0, "info": "Le lac Télé se trouve dans le département de la Likouala, au nord du Congo."},
+  {"id": "geo-033", "c": "geo", "n": 2, "q": "Lequel de ces noms est un arrondissement de Brazzaville ?", "r": ["Bacongo", "Brooklyn", "Soweto"], "ok": 0, "info": "Bacongo est le deuxième arrondissement de Brazzaville."},
+  {"id": "geo-034", "c": "geo", "n": 2, "q": "Lequel de ces noms est un arrondissement de Brazzaville ?", "r": ["Moungali", "Harlem", "Montmartre"], "ok": 0, "info": "Moungali est le quatrième arrondissement de Brazzaville."},
+  {"id": "geo-035", "c": "geo", "n": 3, "q": "Combien d’arrondissements compte Brazzaville ?", "r": ["Neuf", "Trois", "Vingt"], "ok": 0, "info": "Brazzaville compte neuf arrondissements, de Makélékélé à Djiri."},
+  {"id": "geo-036", "c": "geo", "n": 3, "q": "Lequel de ces noms est un arrondissement de Pointe-Noire ?", "r": ["Loandjili", "Bacongo", "Talangaï"], "ok": 0, "info": "Loandjili est un arrondissement de Pointe-Noire."},
+  {"id": "geo-037", "c": "geo", "n": 3, "q": "Comment s’appelle l’île du fleuve Congo qui fait partie du département de Brazzaville ?", "r": ["L’île Mbamou", "L’île de Gorée", "L’île Maurice"], "ok": 0, "info": "L’île Mbamou est une île du fleuve Congo, dans le département de Brazzaville."},
+  {"id": "nature-013", "c": "nature", "n": 1, "q": "Quel grand reptile à la gueule pleine de dents vit dans les rivières du Congo ?", "r": ["Le crocodile", "Le kangourou", "Le panda"], "ok": 0, "info": "Le crocodile vit dans les rivières et les lacs du Congo."},
+  {"id": "nature-014", "c": "nature", "n": 2, "q": "Quel singe au visage très coloré vit dans les forêts de la côte du Congo ?", "r": ["Le mandrill", "Le zèbre", "Le koala"], "ok": 0, "info": "Le mandrill vit dans les forêts de la côte, comme à Conkouati-Douli."},
+  {"id": "nature-015", "c": "nature", "n": 2, "q": "Quel félin tacheté vit dans les forêts du Congo ?", "r": ["Le léopard", "Le tigre", "Le lion"], "ok": 0, "info": "Le léopard est un grand félin tacheté qui vit dans les forêts du Congo."},
+  {"id": "nature-016", "c": "nature", "n": 2, "q": "Quel arbre donne les noix de palme utilisées pour la sauce moambe ?", "r": ["Le palmier à huile", "Le baobab", "Le sapin"], "ok": 0, "info": "Le palmier à huile donne les noix de palme."},
+  {"id": "nature-017", "c": "nature", "n": 1, "q": "Quelles sont les deux grandes saisons au Congo ?", "r": ["La saison sèche et la saison des pluies", "L’hiver et l’été", "Le printemps et l’automne"], "ok": 0, "info": "Au Congo, il y a une saison sèche et une saison des pluies."},
+  {"id": "nature-018", "c": "nature", "n": 3, "q": "Comment s’appelle la clairière de Nouabalé-Ndoki où l’on observe éléphants et gorilles ?", "r": ["Mbeli Bai", "Mont Blanc", "Yellowstone"], "ok": 0, "info": "Mbeli Bai est une grande clairière où viennent des éléphants et des gorilles."},
+  {"id": "nature-019", "c": "nature", "n": 3, "q": "Comment s’appelle le grand poisson aux dents pointues des rivières du nord du Congo ?", "r": ["Le poisson-tigre goliath", "Le poisson-clown", "Le poisson rouge"], "ok": 0, "info": "Le poisson-tigre goliath vit dans les rivières du nord du Congo."},
+  {"id": "nature-020", "c": "nature", "n": 3, "q": "En quelle année la forêt d’Odzala-Kokoua est-elle entrée au patrimoine mondial de l’UNESCO ?", "r": ["2023", "1960", "1980"], "ok": 0, "info": "Le massif forestier d’Odzala-Kokoua est inscrit au patrimoine mondial depuis 2023."},
+  {"id": "nature-021", "c": "nature", "n": 3, "q": "En quelle année le parc de Conkouati-Douli a-t-il été créé ?", "r": ["1999", "1899", "2019"], "ok": 0, "info": "Le parc national de Conkouati-Douli a été créé en 1999."},
+  {"id": "nature-022", "c": "nature", "n": 3, "q": "En quelle année le parc de Nouabalé-Ndoki a-t-il été créé ?", "r": ["1993", "1893", "2003"], "ok": 0, "info": "Le parc national de Nouabalé-Ndoki a été créé en 1993."},
+  {"id": "nature-023", "c": "nature", "n": 3, "q": "Quelle part du Congo est couverte de forêt ?", "r": ["Environ les deux tiers", "Un dixième", "Rien du tout"], "ok": 0, "info": "Environ les deux tiers du territoire du Congo sont couverts de forêts."},
+  {"id": "nature-024", "c": "nature", "n": 3, "q": "Quelle créature légendaire, semblable à un dinosaure, dit-on vivre près du lac Télé ?", "r": ["Le Mokélé-mbembé", "Le dragon chinois", "Le yéti"], "ok": 0, "info": "Selon une légende, le Mokélé-mbembé vivrait près du lac Télé. Ce n’est qu’une légende."},
+  {"id": "nature-025", "c": "nature", "n": 3, "q": "Quel genre de forêt entoure le lac Télé ?", "r": ["Une forêt marécageuse, souvent inondée", "Une forêt de sapins", "Un désert"], "ok": 0, "info": "Autour du lac Télé, il y a de grandes forêts marécageuses."},
+  {"id": "histoire-014", "c": "histoire", "n": 3, "q": "Comment s’appelait le Congo, colonie française, avant l’indépendance ?", "r": ["Le Moyen-Congo", "Le Petit-Congo", "Le Congo-Rouge"], "ok": 0, "info": "Avant l’indépendance, le Congo s’appelait le Moyen-Congo."},
+  {"id": "histoire-015", "c": "histoire", "n": 3, "q": "En quelle année Brazzaville est-elle devenue la capitale de l’Afrique-Équatoriale française ?", "r": ["1910", "1810", "1990"], "ok": 0, "info": "Brazzaville est devenue la capitale de l’Afrique-Équatoriale française en 1910."},
+  {"id": "histoire-016", "c": "histoire", "n": 3, "q": "Depuis quelle année Brazzaville est-elle la capitale de la République du Congo ?", "r": ["1958", "1858", "1998"], "ok": 0, "info": "Brazzaville est la capitale de la République du Congo depuis 1958."},
+  {"id": "histoire-017", "c": "histoire", "n": 3, "q": "Dans quel village a été signé le traité entre Brazza et le roi Makoko ?", "r": ["À Mbé", "À Paris", "À Pointe-Noire"], "ok": 0, "info": "Le traité a été signé à Mbé, au nord de Brazzaville."},
+  {"id": "histoire-018", "c": "histoire", "n": 3, "q": "Comment appelle-t-on les journées des 13, 14 et 15 août 1963 ?", "r": ["Les Trois Glorieuses", "Les Trois Mousquetaires", "Les Trois Petits Cochons"], "ok": 0, "info": "Les 13, 14 et 15 août 1963, on parle des Trois Glorieuses."},
+  {"id": "histoire-019", "c": "histoire", "n": 3, "q": "Comment s’appelle la maison du général de Gaulle à Brazzaville ?", "r": ["La Case de Gaulle", "Le Palais de l’Élysée", "Le château de Versailles"], "ok": 0, "info": "La Case de Gaulle a été construite à Brazzaville en 1941."},
+  {"id": "histoire-020", "c": "histoire", "n": 2, "q": "Comment s’appelle le peuple du roi Makoko ?", "r": ["Les Tékés", "Les Vikings", "Les Romains"], "ok": 0, "info": "Le roi Makoko était le roi des Tékés."},
+  {"id": "histoire-021", "c": "histoire", "n": 3, "q": "Quel ancien royaume se trouvait sur la côte du Congo ?", "r": ["Le royaume de Loango", "Le royaume de Belgique", "Le royaume du Maroc"], "ok": 0, "info": "Le royaume de Loango se trouvait sur la côte atlantique."},
+  {"id": "histoire-022", "c": "histoire", "n": 3, "q": "De quel pays Pierre Savorgnan de Brazza était-il originaire à sa naissance ?", "r": ["De l’Italie", "De l’Angleterre", "Du Portugal"], "ok": 0, "info": "Pierre Savorgnan de Brazza est né en Italie, avant de devenir explorateur français."},
+  {"id": "culture-015", "c": "culture", "n": 3, "q": "Comment s’appelle un célèbre orchestre de Brazzaville, créé en 1959 ?", "r": ["Les Bantous de la Capitale", "Les Beatles", "Les Rolling Stones"], "ok": 0, "info": "L’orchestre Les Bantous de la Capitale est né à Brazzaville en 1959."},
+  {"id": "culture-016", "c": "culture", "n": 3, "q": "En quelle année l’École de peinture de Poto-Poto a-t-elle été fondée ?", "r": ["1951", "1851", "1991"], "ok": 0, "info": "L’École de peinture de Poto-Poto a été fondée en 1951."},
+  {"id": "culture-017", "c": "culture", "n": 3, "q": "Quel peintre français a fondé l’École de peinture de Poto-Poto ?", "r": ["Pierre Lods", "Pablo Picasso", "Claude Monet"], "ok": 0, "info": "Pierre Lods a fondé l’École de peinture de Poto-Poto à Brazzaville."},
+  {"id": "culture-018", "c": "culture", "n": 3, "q": "À quelle musique la SAPE est-elle très liée ?", "r": ["La rumba", "Le rock", "Le tango"], "ok": 0, "info": "La SAPE et la rumba sont très liées."},
+  {"id": "culture-019", "c": "culture", "n": 3, "q": "En quelle année Brazzaville est-elle devenue « ville créative » de l’UNESCO pour la musique ?", "r": ["2013", "1913", "1960"], "ok": 0, "info": "Brazzaville est ville créative de l’UNESCO pour la musique depuis 2013."},
+  {"id": "culture-020", "c": "culture", "n": 3, "q": "Depuis quelle année Brazzaville accueille-t-elle le FESPAM ?", "r": ["1996", "1896", "2016"], "ok": 0, "info": "Brazzaville est la ville du FESPAM depuis 1996."},
+  {"id": "langues-002", "c": "langues", "n": 1, "q": "Que veut dire « mbisi » en lingala ?", "r": ["Poisson", "Maison", "Eau"], "ok": 0, "info": "En lingala, « mbisi » veut dire poisson."},
+  {"id": "langues-003", "c": "langues", "n": 1, "q": "Que veut dire « ngando » en lingala ?", "r": ["Crocodile", "Éléphant", "Lion"], "ok": 0, "info": "En lingala, « ngando » veut dire crocodile."},
+  {"id": "langues-004", "c": "langues", "n": 1, "q": "Que veut dire « nzoku » en lingala ?", "r": ["Éléphant", "Crocodile", "Serpent"], "ok": 0, "info": "En lingala, « nzoku » veut dire éléphant."},
+  {"id": "langues-005", "c": "langues", "n": 1, "q": "Que veut dire « nkosi » en lingala ?", "r": ["Lion", "Poisson", "Oiseau"], "ok": 0, "info": "En lingala, « nkosi » veut dire lion."},
+  {"id": "langues-006", "c": "langues", "n": 2, "q": "Que veut dire « mayi » en lingala ?", "r": ["Eau", "Feu", "Pain"], "ok": 0, "info": "En lingala, « mayi » veut dire eau."},
+  {"id": "langues-007", "c": "langues", "n": 2, "q": "Que veut dire « ndako » en lingala ?", "r": ["Maison", "École", "Voiture"], "ok": 0, "info": "En lingala, « ndako » veut dire maison."},
+  {"id": "langues-008", "c": "langues", "n": 2, "q": "Que veut dire « matondi » en lingala ?", "r": ["Merci", "Bonne nuit", "Au revoir"], "ok": 0, "info": "En lingala, « matondi » veut dire merci."},
+  {"id": "langues-009", "c": "langues", "n": 2, "q": "Que veut dire « ndeke » en lingala ?", "r": ["Oiseau", "Poisson", "Chat"], "ok": 0, "info": "En lingala, « ndeke » veut dire oiseau."},
+  {"id": "langues-010", "c": "langues", "n": 2, "q": "Que veut dire « ngubu » en lingala ?", "r": ["Hippopotame", "Girafe", "Zèbre"], "ok": 0, "info": "En lingala, « ngubu » veut dire hippopotame."},
+  {"id": "langues-011", "c": "langues", "n": 2, "q": "Que veut dire « nioka » en lingala ?", "r": ["Serpent", "Souris", "Vache"], "ok": 0, "info": "En lingala, « nioka » veut dire serpent."},
+  {"id": "langues-012", "c": "langues", "n": 3, "q": "Que veut dire « mayele » en lingala ?", "r": ["Intelligence", "Faim", "Joie"], "ok": 0, "info": "En lingala, « mayele » veut dire intelligence."},
+  {"id": "langues-013", "c": "langues", "n": 3, "q": "Que veut dire « likambo te » en lingala ?", "r": ["Pas de problème", "Au revoir", "Bonne nuit"], "ok": 0, "info": "En lingala, « likambo te » veut dire pas de problème."},
+  {"id": "cuisine-009", "c": "cuisine", "n": 2, "q": "Quel petit piment très fort utilise-t-on dans la cuisine congolaise ?", "r": ["Le pili-pili", "Le chocolat", "Le sucre"], "ok": 0, "info": "Le pili-pili est un petit piment très fort."},
+  {"id": "cuisine-010", "c": "cuisine", "n": 3, "q": "De quel continent le manioc est-il arrivé en Afrique ?", "r": ["De l’Amérique", "De l’Europe", "De l’Australie"], "ok": 0, "info": "Le manioc est arrivé d’Amérique en Afrique il y a plusieurs siècles."},
+  {"id": "cuisine-011", "c": "cuisine", "n": 2, "q": "Quelle banane se mange cuite, souvent avec une sauce ?", "r": ["La banane plantain", "La banane jaune sucrée", "La banane en bonbon"], "ok": 0, "info": "La banane plantain se mange cuite."},
+  {"id": "cuisine-012", "c": "cuisine", "n": 3, "q": "Avec quoi assaisonne-t-on les feuilles de manioc pilées du saka-saka ?", "r": ["De la pâte d’arachide ou de l’huile de palme", "Du chocolat", "De la crème glacée"], "ok": 0, "info": "On prépare le saka-saka avec de la pâte d’arachide ou de l’huile de palme."},
+  {"id": "cuisine-013", "c": "cuisine", "n": 3, "q": "Quelle salade, faite avec le cœur du palmier, est un plat congolais ?", "r": ["La salade de chou palmiste", "La salade de fruits", "La salade de riz"], "ok": 0, "info": "La salade de chou palmiste est un plat connu du Congo."},
+  {"id": "cuisine-014", "c": "cuisine", "n": 3, "q": "Quel autre nom donne-t-on au poulet à la moambe ?", "r": ["Le poulet mossaka", "Le poulet frites", "Le poulet rôti de Noël"], "ok": 0, "info": "Le poulet à la moambe s’appelle aussi poulet mossaka."},
+  {"id": "sport-009", "c": "sport", "n": 3, "q": "Quel est l’autre surnom des Diables Rouges ?", "r": ["Les Guerriers de l’Équateur", "Les Lions indomptables", "Les Aigles de Carthage"], "ok": 0, "info": "Les Diables Rouges sont aussi appelés les Guerriers de l’Équateur."},
+  {"id": "sport-010", "c": "sport", "n": 2, "q": "Combien de fois le Congo a-t-il gagné la Coupe d’Afrique des nations ?", "r": ["Une fois", "Cinq fois", "Jamais"], "ok": 0, "info": "Le Congo a gagné une fois la CAN, en 1972."},
+  {"id": "sport-011", "c": "sport", "n": 3, "q": "Quel a été le score de la finale de la CAN 1972 entre le Congo et le Mali ?", "r": ["3 à 2", "1 à 0", "5 à 5"], "ok": 0, "info": "Le Congo a gagné la finale 3 à 2."},
+  {"id": "sport-012", "c": "sport", "n": 2, "q": "Quelle ville a accueilli les 11es Jeux africains en 2015 ?", "r": ["Brazzaville", "Paris", "Londres"], "ok": 0, "info": "Les 11es Jeux africains ont eu lieu à Brazzaville en 2015."},
+  {"id": "sport-013", "c": "sport", "n": 3, "q": "Dans quel complexe sportif de Brazzaville se sont déroulés les Jeux africains de 2015 ?", "r": ["Le complexe de Kintélé", "Le Stade de France", "Wembley"], "ok": 0, "info": "Les Jeux africains de 2015 se sont déroulés au complexe sportif de Kintélé."},
+  {"id": "sport-014", "c": "sport", "n": 3, "q": "Qui a gagné le tournoi de football des Jeux africains de 1965 à Brazzaville ?", "r": ["Le Congo", "Le Brésil", "L’Allemagne"], "ok": 0, "info": "Le Congo a gagné le football aux Jeux africains de 1965."},
+  {"id": "geo-038", "c": "geo", "n": 3, "q": "Avec quel pays voisin le Congo a-t-il la frontière la plus longue ?", "r": ["La République démocratique du Congo", "Le Gabon", "Le Cameroun"], "ok": 0, "info": "La frontière avec la RDC est la plus longue : plus de 2 400 kilomètres."},
+  {"id": "geo-039", "c": "geo", "n": 3, "q": "Avec quel pays le Congo a-t-il la frontière la plus courte ?", "r": ["L’Angola", "Le Gabon", "La République démocratique du Congo"], "ok": 0, "info": "La frontière avec l’Angola (le Cabinda) mesure environ 200 kilomètres."},
+  {"id": "geo-040", "c": "geo", "n": 3, "q": "Environ combien d’habitants compte le Congo ?", "r": ["Environ 6 millions", "Environ 600 millions", "Environ 60 000"], "ok": 0, "info": "Le Congo compte environ 6 millions d’habitants."},
+  {"id": "geo-041", "c": "geo", "n": 3, "q": "Où vit environ 70 % des Congolais ?", "r": ["À Brazzaville, à Pointe-Noire ou le long du chemin de fer", "Dans le nord, au milieu de la forêt", "Sur les îles du fleuve"], "ok": 0, "info": "Environ 70 % des Congolais vivent à Brazzaville, à Pointe-Noire ou le long du chemin de fer qui les relie."},
+  {"id": "geo-042", "c": "geo", "n": 3, "q": "Quel est le chef-lieu du département de la Cuvette-Ouest ?", "r": ["Ewo", "Owando", "Kinkala"], "ok": 0, "info": "Ewo est le chef-lieu du département de la Cuvette-Ouest."},
+  {"id": "geo-043", "c": "geo", "n": 3, "q": "Quel est le chef-lieu du département du Kouilou ?", "r": ["Hinda", "Ewo", "Sibiti"], "ok": 0, "info": "Hinda est le chef-lieu du département du Kouilou."},
+  {"id": "geo-044", "c": "geo", "n": 3, "q": "Quelles sont les deux villes du Congo qui sont aussi des départements ?", "r": ["Brazzaville et Pointe-Noire", "Dolisie et Ouesso", "Owando et Ewo"], "ok": 0, "info": "Brazzaville et Pointe-Noire sont à la fois des villes et des départements."},
+  {"id": "nature-026", "c": "nature", "n": 3, "q": "Quel type de gorille vit au Congo ?", "r": ["Le gorille des plaines de l’ouest", "Le gorille des montagnes", "Le gorille des neiges"], "ok": 0, "info": "Au Congo, on trouve le gorille des plaines de l’ouest."},
+  {"id": "histoire-023", "c": "histoire", "n": 3, "q": "En quelle année Brazzaville est-elle devenue la capitale de la France libre ?", "r": ["1940", "1840", "1960"], "ok": 0, "info": "Brazzaville est devenue la capitale de la France libre le 27 octobre 1940."},
+  {"id": "monuments-001", "c": "monuments", "n": 2, "q": "Quelle église de Brazzaville est célèbre pour son toit de tuiles vertes ?", "r": ["La basilique Sainte-Anne du Congo", "Notre-Dame de Paris", "La cathédrale de Cologne"], "ok": 0, "info": "La basilique Sainte-Anne du Congo est célèbre pour son toit de tuiles vertes."},
+  {"id": "monuments-002", "c": "monuments", "n": 3, "q": "En quelle année la basilique Sainte-Anne a-t-elle été construite ?", "r": ["1949", "1749", "1999"], "ok": 0, "info": "La basilique Sainte-Anne date de 1949."},
+  {"id": "monuments-003", "c": "monuments", "n": 3, "q": "Quel architecte a dessiné la basilique Sainte-Anne ?", "r": ["Roger Erell", "Gustave Eiffel", "Le Corbusier"], "ok": 0, "info": "La basilique Sainte-Anne a été dessinée par l’architecte Roger Erell."},
+  {"id": "monuments-004", "c": "monuments", "n": 3, "q": "En quelle année le mémorial Pierre Savorgnan de Brazza a-t-il été inauguré ?", "r": ["2006", "1906", "1986"], "ok": 0, "info": "Le mémorial Pierre Savorgnan de Brazza a été inauguré en 2006."},
+  {"id": "monuments-005", "c": "monuments", "n": 3, "q": "De quel pays les restes de Brazza ont-ils été ramenés à Brazzaville en 2006 ?", "r": ["De l’Algérie", "De la Chine", "Du Brésil"], "ok": 0, "info": "En 2006, les restes de Brazza sont revenus d’Algérie pour être installés à Brazzaville."},
+  {"id": "monuments-006", "c": "monuments", "n": 2, "q": "Comment s’appelle la plus haute tour de Brazzaville ?", "r": ["La tour Nabemba", "La tour Eiffel", "La tour de Pise"], "ok": 0, "info": "La tour Nabemba est la plus haute tour de Brazzaville."},
+  {"id": "monuments-007", "c": "monuments", "n": 3, "q": "Combien de mètres mesure la tour Nabemba ?", "r": ["106 mètres", "10 mètres", "1 060 mètres"], "ok": 0, "info": "La tour Nabemba mesure environ 106 mètres."},
+  {"id": "monuments-008", "c": "monuments", "n": 3, "q": "Quel monument de Brazzaville, inauguré en 1944, est dédié à Brazza et à ses compagnons ?", "r": ["Le phare de Brazzaville", "La tour Eiffel", "L’Arc de triomphe"], "ok": 0, "info": "Le phare de Brazzaville a été inauguré en 1944."},
+  {"id": "monuments-009", "c": "monuments", "n": 3, "q": "Comment s’appelle le pont de Brazzaville qui porte la date de l’indépendance ?", "r": ["Le pont du 15 août 1960", "Le pont de Brooklyn", "Le pont des Arts"], "ok": 0, "info": "Le pont du 15 août 1960 rappelle le jour de l’indépendance."},
+  {"id": "monuments-010", "c": "monuments", "n": 3, "q": "Quel stade de Brazzaville, construit en 1944, porte le nom d’un gouverneur ?", "r": ["Le stade Félix-Éboué", "Le stade de Wembley", "Le Maracanã"], "ok": 0, "info": "Le stade Félix-Éboué a été construit en 1944 à côté de la basilique Sainte-Anne."},
+  {"id": "monuments-011", "c": "monuments", "n": 3, "q": "Quel homme, qui a fait abolir l’esclavage en France en 1848, a un monument à Brazzaville ?", "r": ["Victor Schœlcher", "Napoléon", "Louis XIV"], "ok": 0, "info": "Un monument à Victor Schœlcher se trouve à Brazzaville."},
+  {"id": "monuments-012", "c": "monuments", "n": 3, "q": "Dans quel arrondissement se trouve l’École de peinture de Poto-Poto ?", "r": ["Moungali", "Bacongo", "Djiri"], "ok": 0, "info": "L’École de peinture de Poto-Poto se trouve à Moungali."},
+  {"id": "monuments-013", "c": "monuments", "n": 3, "q": "Dans quel arrondissement se trouve la basilique Sainte-Anne ?", "r": ["Poto-Poto", "Madibou", "Djiri"], "ok": 0, "info": "La basilique Sainte-Anne se trouve à Poto-Poto, le troisième arrondissement."},
+  {"id": "monuments-014", "c": "monuments", "n": 2, "q": "Lequel de ces marchés se trouve à Brazzaville ?", "r": ["Le marché Total", "Le marché de Rungis", "Le marché de Camden"], "ok": 0, "info": "Le marché Total est un grand marché de Brazzaville."},
+  {"id": "monuments-015", "c": "monuments", "n": 3, "q": "Quels rapides célèbres se trouvent près de Brazzaville ?", "r": ["Les rapides du Djoué", "Les chutes Victoria", "Les chutes du Niagara"], "ok": 0, "info": "Les rapides du Djoué se trouvent près de Brazzaville."},
+  {"id": "economie-001", "c": "economie", "n": 2, "q": "Quelle ressource, tirée surtout de la mer, est la première richesse du Congo ?", "r": ["Le pétrole", "Le diamant", "Le sel"], "ok": 0, "info": "Le pétrole offshore est la première richesse du Congo."},
+  {"id": "economie-002", "c": "economie", "n": 1, "q": "Que produit-on avec les arbres des forêts du Congo ?", "r": ["Du bois", "Du sucre", "Du lait"], "ok": 0, "info": "Les arbres des forêts du Congo donnent du bois."},
+  {"id": "economie-003", "c": "economie", "n": 3, "q": "Que veut dire CFCO ?", "r": ["Chemin de fer Congo-Océan", "Chemin de fer du Cameroun et du Gabon", "Compagnie des fleuves du Congo"], "ok": 0, "info": "CFCO veut dire Chemin de fer Congo-Océan."},
+  {"id": "economie-004", "c": "economie", "n": 3, "q": "Environ quelle est la longueur du chemin de fer Congo-Océan ?", "r": ["510 km", "51 km", "5 100 km"], "ok": 0, "info": "Le chemin de fer Congo-Océan mesure environ 510 kilomètres."},
+  {"id": "economie-005", "c": "economie", "n": 3, "q": "Quelle route nationale relie Brazzaville à Pointe-Noire ?", "r": ["La RN1", "La RN11", "La RN50"], "ok": 0, "info": "La route nationale 1 (RN1) relie Brazzaville à Pointe-Noire."},
+  {"id": "economie-006", "c": "economie", "n": 3, "q": "Quel barrage hydroélectrique, lancé en 2011, fournit de l’électricité au Congo ?", "r": ["Le barrage d’Imboulou", "Le barrage d’Assouan", "Le barrage des Trois-Gorges"], "ok": 0, "info": "Le barrage d’Imboulou a été lancé en 2011."},
+  {"id": "economie-007", "c": "economie", "n": 3, "q": "Quelle ressource du sol, utilisée pour faire de l’engrais, est exploitée sur la côte du Congo ?", "r": ["La potasse", "Le sel de cuisine", "Le sable"], "ok": 0, "info": "La potasse sert à faire de l’engrais."},
+  {"id": "economie-008", "c": "economie", "n": 2, "q": "Comment s’appelle le grand port du Congo, sur l’océan Atlantique ?", "r": ["Le port de Pointe-Noire", "Le port de Marseille", "Le port de Dakar"], "ok": 0, "info": "Le port de Pointe-Noire est le grand port du Congo."},
+  {"id": "economie-009", "c": "economie", "n": 3, "q": "De quel type est le port de Pointe-Noire, le seul de la région ?", "r": ["Un port en eau profonde", "Un port de lac", "Un port de rivière"], "ok": 0, "info": "Pointe-Noire est le seul port en eau profonde de la région."},
+  {"id": "economie-010", "c": "economie", "n": 3, "q": "Quel arbre est planté près de Pointe-Noire pour fabriquer du papier ?", "r": ["L’eucalyptus", "Le sapin de Noël", "Le chêne"], "ok": 0, "info": "Des plantations d’eucalyptus servent à fabriquer du papier."},
+  {"id": "langues-014", "c": "langues", "n": 1, "q": "Comment dit-on le chiffre 1 en lingala ?", "r": ["Moko", "Mibale", "Misato"], "ok": 0, "info": "En lingala, 1 se dit « moko »."},
+  {"id": "langues-015", "c": "langues", "n": 1, "q": "Comment dit-on le chiffre 2 en lingala ?", "r": ["Mibale", "Moko", "Mitano"], "ok": 0, "info": "En lingala, 2 se dit « mibale »."},
+  {"id": "langues-016", "c": "langues", "n": 1, "q": "Comment dit-on le chiffre 3 en lingala ?", "r": ["Misato", "Minei", "Zomi"], "ok": 0, "info": "En lingala, 3 se dit « misato »."},
+  {"id": "langues-017", "c": "langues", "n": 1, "q": "Comment dit-on le chiffre 4 en lingala ?", "r": ["Minei", "Misato", "Moko"], "ok": 0, "info": "En lingala, 4 se dit « minei »."},
+  {"id": "langues-018", "c": "langues", "n": 1, "q": "Comment dit-on le chiffre 5 en lingala ?", "r": ["Mitano", "Mibale", "Libwa"], "ok": 0, "info": "En lingala, 5 se dit « mitano »."},
+  {"id": "langues-019", "c": "langues", "n": 2, "q": "Comment dit-on le chiffre 6 en lingala ?", "r": ["Motoba", "Mitano", "Zomi"], "ok": 0, "info": "En lingala, 6 se dit « motoba »."},
+  {"id": "langues-020", "c": "langues", "n": 2, "q": "Comment dit-on le chiffre 7 en lingala ?", "r": ["Sambo", "Motoba", "Mwambe"], "ok": 0, "info": "En lingala, 7 se dit « sambo »."},
+  {"id": "langues-021", "c": "langues", "n": 2, "q": "Comment dit-on le chiffre 8 en lingala ?", "r": ["Mwambe", "Sambo", "Libwa"], "ok": 0, "info": "En lingala, 8 se dit « mwambe »."},
+  {"id": "langues-022", "c": "langues", "n": 2, "q": "Comment dit-on le chiffre 9 en lingala ?", "r": ["Libwa", "Mwambe", "Zomi"], "ok": 0, "info": "En lingala, 9 se dit « libwa »."},
+  {"id": "langues-023", "c": "langues", "n": 2, "q": "Comment dit-on le chiffre 10 en lingala ?", "r": ["Zomi", "Libwa", "Misato"], "ok": 0, "info": "En lingala, 10 se dit « zomi »."},
+  {"id": "langues-024", "c": "langues", "n": 3, "q": "Comment dit-on cent en lingala ?", "r": ["Kama", "Zomi", "Moko"], "ok": 0, "info": "En lingala, 100 se dit « kama »."},
+  {"id": "langues-025", "c": "langues", "n": 2, "q": "Que veut dire « bolingo » en lingala ?", "r": ["Amour", "Colère", "Faim"], "ok": 0, "info": "En lingala, « bolingo » veut dire amour."},
+  {"id": "langues-026", "c": "langues", "n": 2, "q": "Que veut dire « motema » en lingala ?", "r": ["Cœur", "Main", "Pied"], "ok": 0, "info": "En lingala, « motema » veut dire cœur."},
+  {"id": "langues-027", "c": "langues", "n": 2, "q": "Que veut dire « ndeko » en lingala ?", "r": ["Frère ou sœur", "Voisin", "Professeur"], "ok": 0, "info": "En lingala, « ndeko » veut dire frère ou sœur."},
+  {"id": "langues-028", "c": "langues", "n": 3, "q": "Que veut dire « kombo » en lingala ?", "r": ["Nom", "Maison", "Eau"], "ok": 0, "info": "En lingala, « kombo » veut dire nom."},
+  {"id": "langues-029", "c": "langues", "n": 2, "q": "Que veut dire « malamu » en lingala ?", "r": ["Bien, d’accord", "Mal", "Froid"], "ok": 0, "info": "En lingala, « malamu » veut dire bien ou d’accord."},
+  {"id": "langues-030", "c": "langues", "n": 2, "q": "Que veut dire « mwasi » en lingala ?", "r": ["Femme", "Homme", "Enfant"], "ok": 0, "info": "En lingala, « mwasi » veut dire femme."},
+  {"id": "langues-031", "c": "langues", "n": 2, "q": "Que veut dire « mobali » en lingala ?", "r": ["Homme", "Femme", "Chien"], "ok": 0, "info": "En lingala, « mobali » veut dire homme."},
+  {"id": "langues-032", "c": "langues", "n": 2, "q": "Que veut dire « mwana » en lingala ?", "r": ["Enfant", "Pain", "Fleuve"], "ok": 0, "info": "En lingala, « mwana » veut dire enfant."},
+  {"id": "langues-033", "c": "langues", "n": 2, "q": "Que veut dire « mokolo » en lingala ?", "r": ["Jour", "Nuit", "Année"], "ok": 0, "info": "En lingala, « mokolo » veut dire jour."},
+  {"id": "langues-034", "c": "langues", "n": 3, "q": "Que veut dire « sanza » en lingala ?", "r": ["Mois", "Jour", "Année"], "ok": 0, "info": "En lingala, « sanza » veut dire mois."},
+  {"id": "langues-035", "c": "langues", "n": 2, "q": "Que veut dire « kitoko » en lingala ?", "r": ["Beau, joli", "Triste", "Grand"], "ok": 0, "info": "En lingala, « kitoko » veut dire beau ou joli."},
+  {"id": "langues-036", "c": "langues", "n": 2, "q": "Que veut dire « pembe » en lingala ?", "r": ["Blanc", "Noir", "Rouge"], "ok": 0, "info": "En lingala, « pembe » veut dire blanc."},
+  {"id": "langues-037", "c": "langues", "n": 2, "q": "Que veut dire « ngombe » en lingala ?", "r": ["Vache", "Chèvre", "Poule"], "ok": 0, "info": "En lingala, « ngombe » veut dire vache."},
+  {"id": "langues-038", "c": "langues", "n": 2, "q": "Que veut dire « ntaba » en lingala ?", "r": ["Chèvre", "Vache", "Cheval"], "ok": 0, "info": "En lingala, « ntaba » veut dire chèvre."},
+  {"id": "langues-039", "c": "langues", "n": 2, "q": "Que veut dire « ngulu » en lingala ?", "r": ["Cochon", "Poule", "Âne"], "ok": 0, "info": "En lingala, « ngulu » veut dire cochon."},
+  {"id": "langues-040", "c": "langues", "n": 2, "q": "Que veut dire « mpunda » en lingala ?", "r": ["Cheval", "Chien", "Chat"], "ok": 0, "info": "En lingala, « mpunda » veut dire cheval."},
+  {"id": "langues-041", "c": "langues", "n": 3, "q": "Que veut dire « nguma » en lingala ?", "r": ["Python", "Éléphant", "Poisson"], "ok": 0, "info": "En lingala, « nguma » veut dire python ou boa."},
+  {"id": "langues-042", "c": "langues", "n": 3, "q": "Que veut dire « mokomboso » en lingala ?", "r": ["Chimpanzé", "Lion", "Crocodile"], "ok": 0, "info": "En lingala, « mokomboso » veut dire chimpanzé."},
+  {"id": "langues-043", "c": "langues", "n": 3, "q": "Que veut dire « nkoyi » en lingala ?", "r": ["Léopard", "Lion", "Hippopotame"], "ok": 0, "info": "En lingala, « nkoyi » veut dire léopard."},
+  {"id": "langues-044", "c": "langues", "n": 3, "q": "Que veut dire « mbembe » en lingala ?", "r": ["Escargot", "Crabe", "Chat"], "ok": 0, "info": "En lingala, « mbembe » veut dire escargot."},
+  {"id": "langues-045", "c": "langues", "n": 3, "q": "Que veut dire « nzoyi » en lingala ?", "r": ["Abeille", "Mouche", "Moustique"], "ok": 0, "info": "En lingala, « nzoyi » veut dire abeille."},
+  {"id": "langues-046", "c": "langues", "n": 3, "q": "Que veut dire « ngungi » en lingala ?", "r": ["Moustique", "Abeille", "Mouche"], "ok": 0, "info": "En lingala, « ngungi » veut dire moustique."},
+  {"id": "langues-047", "c": "langues", "n": 3, "q": "Que veut dire « Kombo na yo nani ? » en lingala ?", "r": ["Comment t’appelles-tu ?", "Où habites-tu ?", "Quel âge as-tu ?"], "ok": 0, "info": "« Kombo na yo nani ? » veut dire : comment t’appelles-tu ?"},
+  {"id": "sites-001", "c": "sites", "n": 2, "q": "Quelles gorges rouges près de Pointe-Noire sont surnommées le « Grand Canyon du Congo » ?", "r": ["Les gorges de Diosso", "Les gorges du Verdon", "Les gorges de Samaria"], "ok": 0, "info": "Les gorges de Diosso ressemblent à un petit Grand Canyon."},
+  {"id": "sites-002", "c": "sites", "n": 2, "q": "De quelle couleur est la roche des gorges de Diosso ?", "r": ["Rouge", "Bleue", "Verte"], "ok": 0, "info": "Les falaises des gorges de Diosso sont rouges."},
+  {"id": "sites-003", "c": "sites", "n": 3, "q": "Comment les gorges de Diosso se sont-elles formées ?", "r": ["Par l’érosion du vent et de l’eau", "Par l’éruption d’un volcan", "Par un tremblement de terre"], "ok": 0, "info": "Les gorges de Diosso se sont formées par l’érosion du plateau."},
+  {"id": "sites-004", "c": "sites", "n": 3, "q": "À environ combien de kilomètres de Pointe-Noire se trouvent les gorges de Diosso ?", "r": ["35 km", "3 km", "350 km"], "ok": 0, "info": "Les gorges de Diosso sont à environ 35 kilomètres de Pointe-Noire."},
+  {"id": "sites-005", "c": "sites", "n": 3, "q": "Comment s’appelle le musée du royaume de Loango, près des gorges de Diosso ?", "r": ["Le musée Ma-Loango", "Le Louvre", "Le musée du Prado"], "ok": 0, "info": "Le musée Ma-Loango se trouve à Diosso."},
+  {"id": "sites-006", "c": "sites", "n": 2, "q": "Comment s’appelle la grande plage sauvage au nord de Pointe-Noire ?", "r": ["La Côte sauvage", "La Côte d’Azur", "La Riviera"], "ok": 0, "info": "La Côte sauvage est une grande plage au nord de Pointe-Noire."},
+  {"id": "sites-007", "c": "sites", "n": 3, "q": "Quelle forêt touche l’océan à la Côte sauvage ?", "r": ["Le Mayombe", "La forêt d’Odzala", "La forêt de Sherwood"], "ok": 0, "info": "À la Côte sauvage, la forêt du Mayombe touche l’océan."},
+  {"id": "sites-008", "c": "sites", "n": 3, "q": "Quelle plage se trouve à environ 19 km au nord de Pointe-Noire ?", "r": ["Pointe-Indienne", "Copacabana", "Bondi Beach"], "ok": 0, "info": "Pointe-Indienne est une plage à environ 19 kilomètres au nord de Pointe-Noire."},
+  {"id": "sites-009", "c": "sites", "n": 3, "q": "Quelle réserve du Congo protège des gorilles orphelins, à environ 140 km au nord de Brazzaville ?", "r": ["La réserve de Lésio-Louna", "Le parc du Serengeti", "La réserve du Masai Mara"], "ok": 0, "info": "La réserve de Lésio-Louna accueille des gorilles orphelins."},
+  {"id": "sites-010", "c": "sites", "n": 3, "q": "En quelle année la réserve de Lésio-Louna a-t-elle été fondée ?", "r": ["1999", "1899", "2019"], "ok": 0, "info": "La réserve de Lésio-Louna a été fondée en 1999."},
+  {"id": "sites-011", "c": "sites", "n": 3, "q": "Quelle réserve proche de Lésio-Louna abrite des gorilles et a un « lac bleu » sur sa route ?", "r": ["La réserve de la Léfini", "Le parc d’Odzala", "Le parc de Conkouati-Douli"], "ok": 0, "info": "La réserve de la Léfini abrite des gorilles."},
+  {"id": "sites-012", "c": "sites", "n": 3, "q": "Quel centre, près de Pointe-Noire, accueille des chimpanzés orphelins ?", "r": ["Tchimpounga", "Lola ya Bonobo", "Disneyland"], "ok": 0, "info": "Le centre de Tchimpounga accueille des chimpanzés orphelins."},
+  {"id": "sites-013", "c": "sites", "n": 3, "q": "Quel institut gère le sanctuaire de chimpanzés de Tchimpounga ?", "r": ["L’Institut Jane Goodall", "L’Institut Pasteur", "La NASA"], "ok": 0, "info": "Le sanctuaire de Tchimpounga est géré par l’Institut Jane Goodall."},
+  {"id": "sites-014", "c": "sites", "n": 3, "q": "Quelles chutes du Congo sont proches du « trou de Nguéla » ?", "r": ["Les chutes de la Loufoulakari", "Les chutes Victoria", "Les chutes du Niagara"], "ok": 0, "info": "Les chutes de la Loufoulakari sont proches du trou de Nguéla."},
+  {"id": "sites-015", "c": "sites", "n": 3, "q": "Quelle réserve de biosphère du Mayombe se trouve près de Pointe-Noire ?", "r": ["Dimonika", "Odzala", "Lac Télé"], "ok": 0, "info": "La réserve de biosphère de Dimonika se trouve dans le Mayombe."},
+  {"id": "geo-045", "c": "geo", "n": 2, "q": "Brazzaville se trouve sur quelle rive du fleuve Congo ?", "r": ["La rive nord", "La rive sud", "Une île au milieu"], "ok": 0, "info": "Brazzaville s’étend sur la rive nord du fleuve Congo."},
+  {"id": "geo-046", "c": "geo", "n": 2, "q": "De quoi le Congo tire-t-il son nom ?", "r": ["Du fleuve Congo", "D’une montagne", "D’un roi anglais"], "ok": 0, "info": "Le pays porte le nom du grand fleuve Congo."},
+  {"id": "geo-047", "c": "geo", "n": 3, "q": "Environ combien de kilomètres y a-t-il entre Brazzaville et Pointe-Noire par la route ?", "r": ["Environ 500 km", "Environ 50 km", "Environ 5 000 km"], "ok": 0, "info": "Par la route, il y a environ 500 kilomètres entre Brazzaville et Pointe-Noire."},
+  {"id": "geo-048", "c": "geo", "n": 3, "q": "Quel est le premier arrondissement de Brazzaville ?", "r": ["Makélékélé", "Djiri", "Talangaï"], "ok": 0, "info": "Makélékélé est le premier arrondissement de Brazzaville."},
+  {"id": "geo-049", "c": "geo", "n": 3, "q": "Quel est le plus grand et le plus peuplé des arrondissements de Brazzaville ?", "r": ["Makélékélé", "Poto-Poto", "Djiri"], "ok": 0, "info": "Makélékélé est le plus grand et le plus peuplé des arrondissements."},
+  {"id": "geo-050", "c": "geo", "n": 3, "q": "Quel est le troisième arrondissement de Brazzaville ?", "r": ["Poto-Poto", "Ouenzé", "Madibou"], "ok": 0, "info": "Poto-Poto est le troisième arrondissement de Brazzaville."},
+  {"id": "geo-051", "c": "geo", "n": 3, "q": "Quel est le cinquième arrondissement de Brazzaville ?", "r": ["Ouenzé", "Bacongo", "Mfilou"], "ok": 0, "info": "Ouenzé est le cinquième arrondissement de Brazzaville."},
+  {"id": "geo-052", "c": "geo", "n": 3, "q": "Quel est le sixième arrondissement de Brazzaville, situé tout au nord ?", "r": ["Talangaï", "Moungali", "Makélékélé"], "ok": 0, "info": "Talangaï est le sixième arrondissement de Brazzaville."},
+  {"id": "geo-053", "c": "geo", "n": 3, "q": "Quel est le septième arrondissement de Brazzaville ?", "r": ["Mfilou", "Bacongo", "Poto-Poto"], "ok": 0, "info": "Mfilou est le septième arrondissement de Brazzaville."},
+  {"id": "geo-054", "c": "geo", "n": 3, "q": "Quel est le huitième arrondissement de Brazzaville ?", "r": ["Madibou", "Ouenzé", "Moungali"], "ok": 0, "info": "Madibou est le huitième arrondissement de Brazzaville."},
+  {"id": "geo-055", "c": "geo", "n": 3, "q": "Quel est le neuvième arrondissement de Brazzaville, créé en 2011 ?", "r": ["Djiri", "Bacongo", "Talangaï"], "ok": 0, "info": "Djiri est le neuvième arrondissement de Brazzaville."},
+  {"id": "geo-056", "c": "geo", "n": 3, "q": "Quelle ville du Congo porte le nom d’Albert Dolisie, compagnon de Brazza ?", "r": ["Dolisie", "Ouesso", "Impfondo"], "ok": 0, "info": "La ville de Dolisie porte le nom d’Albert Dolisie, compagnon de Brazza."},
+  {"id": "geo-057", "c": "geo", "n": 3, "q": "Comment appelait-on Dolisie entre 1975 et 1991 ?", "r": ["Loubomo", "Fort-Rousset", "Jacob"], "ok": 0, "info": "Dolisie s’est appelée Loubomo de 1975 à 1991."},
+  {"id": "geo-058", "c": "geo", "n": 3, "q": "Quelle ville s’appelait Fort-Rousset avant 1977 ?", "r": ["Owando", "Nkayi", "Ouesso"], "ok": 0, "info": "Owando s’appelait Fort-Rousset avant 1977."},
+  {"id": "geo-059", "c": "geo", "n": 3, "q": "Quel était l’ancien nom de la ville de Nkayi ?", "r": ["Jacob", "Loubomo", "Fort-Rousset"], "ok": 0, "info": "Nkayi s’appelait Jacob avant d’être rebaptisée."},
+  {"id": "geo-060", "c": "geo", "n": 3, "q": "Quel est le surnom de Dolisie, du temps de sa richesse en bois ?", "r": ["La capitale de l’or vert", "La ville lumière", "La ville rose"], "ok": 0, "info": "Dolisie était appelée la capitale de l’or vert, à cause du bois."},
+  {"id": "geo-061", "c": "geo", "n": 3, "q": "Quelle ville du nord, chef-lieu de la Sangha, est au cœur de la forêt équatoriale près du Cameroun ?", "r": ["Ouesso", "Madingou", "Kinkala"], "ok": 0, "info": "Ouesso est le chef-lieu de la Sangha, dans la forêt équatoriale."},
+  {"id": "geo-062", "c": "geo", "n": 3, "q": "Quel est le chef-lieu du département des Plateaux ?", "r": ["Djambala", "Dolisie", "Impfondo"], "ok": 0, "info": "Djambala est le chef-lieu du département des Plateaux."},
+  {"id": "geo-063", "c": "geo", "n": 3, "q": "Quelle est la troisième ville du Congo par sa population ?", "r": ["Dolisie", "Ouesso", "Madingou"], "ok": 0, "info": "Dolisie est la troisième ville du Congo par sa population."},
+  {"id": "histoire-024", "c": "histoire", "n": 3, "q": "Qui était Albert Dolisie ?", "r": ["Un compagnon de Brazza", "Un roi du Congo", "Un footballeur"], "ok": 0, "info": "Albert Dolisie était un compagnon d’exploration de Brazza."},
+  {"id": "histoire-025", "c": "histoire", "n": 3, "q": "Quelle ville d’Afrique centrale Albert Dolisie a-t-il aidé à fonder ?", "r": ["Bangui", "Dakar", "Le Caire"], "ok": 0, "info": "Albert Dolisie a participé à la fondation de Bangui."},
+  {"id": "cuisine-015", "c": "cuisine", "n": 2, "q": "Quel fruit violet, qui ressemble à une grosse olive, mange-t-on souvent bouilli et salé ?", "r": ["Le safou", "La fraise", "Le raisin"], "ok": 0, "info": "Le safou est un fruit violet à la chair onctueuse."},
+  {"id": "cuisine-016", "c": "cuisine", "n": 3, "q": "Comment appelle-t-on aussi le saka-saka ?", "r": ["Le pondu", "Le couscous", "La paella"], "ok": 0, "info": "Le saka-saka s’appelle aussi pondu."},
+  {"id": "cuisine-017", "c": "cuisine", "n": 3, "q": "Qu’ajoute-t-on souvent aux feuilles de manioc pour faire le saka-saka ?", "r": ["Du poisson fumé, de la pâte d’arachide et de l’huile de palme", "Du lait et du sucre", "Du chocolat et de la crème"], "ok": 0, "info": "On prépare le saka-saka avec du poisson fumé, de la pâte d’arachide et de l’huile de palme."},
+  {"id": "cuisine-018", "c": "cuisine", "n": 3, "q": "Comment appelle-t-on un poisson salé et séché très mangé au Congo ?", "r": ["Le makayabu", "Le sushi", "Le surimi"], "ok": 0, "info": "Le makayabu est un poisson salé et séché."},
+  {"id": "cuisine-019", "c": "cuisine", "n": 1, "q": "Quels jus de fruits sont très appréciés au Congo ?", "r": ["L’ananas et la mangue", "La pomme et la poire", "La fraise et la cerise"], "ok": 0, "info": "Au Congo, on aime beaucoup les jus d’ananas et de mangue."},
+  {"id": "langues-048", "c": "langues", "n": 3, "q": "Que veut dire « mboloko » en lingala ?", "r": ["Antilope", "Éléphant", "Poisson"], "ok": 0, "info": "En lingala, « mboloko » veut dire antilope."},
+  {"id": "langues-049", "c": "langues", "n": 3, "q": "Que veut dire « mpongo » en lingala ?", "r": ["Aigle", "Poule", "Canard"], "ok": 0, "info": "En lingala, « mpongo » veut dire aigle."},
+  {"id": "langues-050", "c": "langues", "n": 3, "q": "Que veut dire « ngembo » en lingala ?", "r": ["Chauve-souris", "Hibou", "Papillon"], "ok": 0, "info": "En lingala, « ngembo » veut dire chauve-souris."},
+  {"id": "langues-051", "c": "langues", "n": 3, "q": "Que veut dire « libata » en lingala ?", "r": ["Canard", "Cochon", "Chat"], "ok": 0, "info": "En lingala, « libata » veut dire canard."},
+  {"id": "langues-052", "c": "langues", "n": 3, "q": "Que veut dire « mpuku » en lingala ?", "r": ["Rat ou souris", "Éléphant", "Lion"], "ok": 0, "info": "En lingala, « mpuku » veut dire rat ou souris."},
+  {"id": "langues-053", "c": "langues", "n": 3, "q": "Que veut dire « ligorodo » en lingala ?", "r": ["Crapaud", "Poisson", "Serpent"], "ok": 0, "info": "En lingala, « ligorodo » veut dire crapaud."},
+  {"id": "geo-064", "c": "geo", "n": 2, "q": "Quel est le deuxième plus long fleuve d’Afrique, après le Nil ?", "r": ["Le fleuve Congo", "Le Niger", "Le Zambèze"], "ok": 0, "info": "Le fleuve Congo est le deuxième plus long fleuve d’Afrique, après le Nil."},
+  {"id": "geo-065", "c": "geo", "n": 3, "q": "Le fleuve Congo est l’un des plus profonds du monde. Quelle profondeur peut-il atteindre ?", "r": ["Plus de 200 mètres", "20 mètres", "2 mètres"], "ok": 0, "info": "Le fleuve Congo peut dépasser 200 mètres de profondeur."},
+  {"id": "geo-066", "c": "geo", "n": 3, "q": "À environ combien de kilomètres au nord de Brazzaville se trouve Mbé, la capitale du roi Makoko ?", "r": ["Environ 100 km", "Environ 10 km", "Environ 1 000 km"], "ok": 0, "info": "Mbé, la capitale du roi Makoko, est à environ 100 kilomètres au nord de Brazzaville."},
+  {"id": "geo-067", "c": "geo", "n": 2, "q": "Au sud du Congo, quand dure la saison sèche ?", "r": ["Environ de juin à septembre", "De décembre à février", "Toute l’année"], "ok": 0, "info": "Dans le sud du Congo, la saison sèche dure environ de juin à septembre."},
+  {"id": "culture-021", "c": "culture", "n": 3, "q": "À quelle date les Bantous de la Capitale ont-ils été créés ?", "r": ["Le 15 août 1959", "Le 1er janvier 1959", "Le 25 décembre 1959"], "ok": 0, "info": "L’orchestre Les Bantous de la Capitale a été créé le 15 août 1959."},
+  {"id": "culture-022", "c": "culture", "n": 3, "q": "Quel musicien est l’un des fondateurs des Bantous de la Capitale ?", "r": ["Nino Malapet", "Franco", "Papa Wemba"], "ok": 0, "info": "Nino Malapet fait partie des fondateurs des Bantous de la Capitale."},
+  {"id": "langues-054", "c": "langues", "n": 2, "q": "Que veut dire « kolia » en lingala ?", "r": ["Manger", "Dormir", "Chanter"], "ok": 0, "info": "En lingala, « kolia » veut dire manger."},
+  {"id": "langues-055", "c": "langues", "n": 2, "q": "Que veut dire « komela » en lingala ?", "r": ["Boire", "Manger", "Courir"], "ok": 0, "info": "En lingala, « komela » veut dire boire."},
+  {"id": "langues-056", "c": "langues", "n": 2, "q": "Que veut dire « kolala » en lingala ?", "r": ["Dormir", "Boire", "Danser"], "ok": 0, "info": "En lingala, « kolala » veut dire dormir."},
+  {"id": "langues-057", "c": "langues", "n": 2, "q": "Que veut dire « koyemba » en lingala ?", "r": ["Chanter", "Dormir", "Manger"], "ok": 0, "info": "En lingala, « koyemba » veut dire chanter."},
+  {"id": "langues-058", "c": "langues", "n": 3, "q": "Que veut dire « kolamba » en lingala ?", "r": ["Préparer à manger", "Dormir", "Boire"], "ok": 0, "info": "En lingala, « kolamba » veut dire préparer à manger, cuisiner."},
+  {"id": "langues-059", "c": "langues", "n": 3, "q": "Que veut dire « kozala » en lingala ?", "r": ["Être", "Manger", "Partir"], "ok": 0, "info": "En lingala, « kozala » veut dire être."},
+  {"id": "langues-060", "c": "langues", "n": 3, "q": "Que veut dire « Kolia malamu » en lingala ?", "r": ["Mange bien", "Dors bien", "Bois bien"], "ok": 0, "info": "« Kolia malamu » veut dire : mange bien."},
+  {"id": "langues-061", "c": "langues", "n": 3, "q": "Que veut dire « Loba lisusu » en lingala ?", "r": ["Répète", "Merci", "Au revoir"], "ok": 0, "info": "« Loba lisusu » veut dire : répète."},
+  {"id": "langues-062", "c": "langues", "n": 3, "q": "Que veut dire « O lobaka lingala ? » ?", "r": ["Tu parles lingala ?", "Tu as faim ?", "Tu viens d’où ?"], "ok": 0, "info": "« O lobaka lingala ? » veut dire : tu parles lingala ?"},
+];
+/*QUIZ_DATA_END*/
+</script>
+<script>
+const WORKER_URL = "https://super-brazza.noxyliabot.workers.dev";
+const LIMITE = 2;           // questions par jour
+const POINTS_PAR_REPONSE = 1; // points gagnés à chaque réponse reçue (règle provisoire, avant le quiz)
+
+// Maillots : points nécessaires pour les débloquer
+const MAILLOTS = [
+  { id: "vert",  nom: "Domicile",  img: "brazza-vert.png",  seuil: 0 },
+  { id: "rouge", nom: "Extérieur", img: "brazza-rouge.png", seuil: 10 },
+  { id: "blanc", nom: "Prestige",  img: "brazza-blanc.png", seuil: 15 }
+];
+
+// Galerie d'ambiance : les 3 vidéos, toujours visibles (même avec 0 point)
+const GALERIE = [
+  { id: "vert",  titre: "Maillot vert",  video: "video-vert.mp4",  poster: "poster-vert.jpg" },
+  { id: "rouge", titre: "Maillot rouge", video: "video-rouge.mp4", poster: "poster-rouge.jpg" },
+  { id: "blanc", titre: "Maillot blanc", video: "video-accueil.mp4", poster: "poster-blanc.jpg" },
+  { id: "saga",  titre: "La saga de l’équipe", video: "video-saga.mp4", poster: "poster-saga.jpg" }
+];
+
+// live = rubrique déjà disponible ; size "demi" = deux par ligne
+const RUBRIQUES = [
+  { id: "equipe",   e: "🦸", live: true, t: "Notre Équipe", d: "La Saga Super Brazza et ses amis" },
+  { id: "galerie",  e: "🎬", live: true, t: "Galerie d’ambiance", d: "Les 3 maillots de Super Brazza en vidéo" },
+  { id: "quiz",     e: "🧠", live: true, size: "demi", t: "Quiz Congo", d: "Géographie, histoire, culture" },
+  { id: "histoire", e: "🌙", size: "demi", t: "Histoire du soir", d: "Une histoire pour dormir" },
+  { id: "chansons", e: "🎵", size: "demi", t: "Chansons", d: "Berceuse ou danse" },
+  { id: "anglais",  e: "🇬🇧", size: "demi", t: "Anglais", d: "Animaux et conversation" },
+  { id: "parent",   e: "📊", t: "Espace Parent", d: "Suivre les progrès de mon enfant" },
+  { id: "cahier",   e: "✏️", t: "Mon cahier", d: "Garde tes questions et tes réponses" },
+  { id: "badges",   e: "🏅", t: "Mes badges", d: "0 / 6 badges débloqués" },
+  { id: "jeux",     e: "⚽", t: "Jeux : Tirs au but", d: "Réponds aux questions et marque des buts !" },
+  { id: "hymne",    e: "🇨🇬", t: "Hymne National", d: "Apprends l’hymne avec Super Brazza" },
+  { id: "anniversaire", e: "🎂", t: "Anniversaire", d: "Chanter joyeux anniversaire à mon ami(e)" },
+  { id: "noxylia",  e: "🏢", t: "À propos de Noxylia", d: "Qui a créé Super Brazza, et nos services" },
+  { id: "chat",     e: "💬", live: true, t: "Discuter avec Super Brazza", d: "Pose-lui tes questions (2 par jour)" }
+];
+
+// Quiz : 5 questions par partie, 1 point par bonne réponse, plafond de points par jour
+const QUIZ_PAR_PARTIE = 5, QUIZ_POINTS_MAX_JOUR = 3;
+// Les questions sont intégrées plus haut dans la page (QUIZ_CONGO et QUIZ_CATEGORIES)
+const QUIZ = (typeof QUIZ_CONGO !== "undefined") ? QUIZ_CONGO : [];
+const QUIZ_CATS = (typeof QUIZ_CATEGORIES !== "undefined") ? QUIZ_CATEGORIES : [];
+
+const TXT = {
+  accueilChat: "Salut ! Je suis Super Brazza. Écris ta question dans ton cahier, puis pose-la-moi ici !",
+  reflexion: "Je réfléchis…", vide: "Écris d’abord ta question.",
+  reseau: "Pas de connexion. Vérifie ton réseau et réessaie.",
+  erreur: "Super Brazza est fatigué en ce moment. Réessaie dans un instant !",
+  limite: "Merci ! 🦸 Tu as utilisé tes 2 questions d’aujourd’hui. Recopie bien tes réponses dans ton cahier, apprends-les par cœur, et reviens demain !",
+  pasMicro: "Le micro ne marche pas sur ce téléphone. Écris ta question.",
+  microErreur: "Je n’ai pas bien entendu. Réessaie ou écris ta question."
+};
+
+const $ = id => document.getElementById(id);
+const zoneRep = $("reponse"), champ = $("question"), btnEnv = $("envoyer"),
+      btnMic = $("micro"), mascotte = $("mascotte"), video = $("video");
+
+let restantes = LIMITE, bloque = false, vue = "accueil", rubCourante = "";
+let rec = null, enEcoute = false, points = 0, maillotActif = "vert", profil = null, ageChoisi = "";
+let dernierTexte = "", voixActive = true, jetonVoix = 0, parle = false;
+let quizPartie = [], quizIdx = 0, quizBonnes = 0, quizCat = "";
+
+/* ---------- Stockage local (uniquement sur le téléphone) ---------- */
+function lire(c) { try { return localStorage.getItem(c); } catch (e) { return null; } }
+function ecrire(c, v) { try { localStorage.setItem(c, v); } catch (e) {} }
+function jour() { return new Date(Date.now() + 3600000).toISOString().slice(0, 10); }
+function idAppareil() {
+  let id = lire("sb_id");
+  if (!id) {
+    id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
+       : "id-" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    ecrire("sb_id", id);
+  }
+  return id;
+}
+
+/* ---------- Message d'info ---------- */
+let minuteur = null;
+function toast(msg, duree = 3500) {
+  const t = $("toast"); t.textContent = msg; t.hidden = false;
+  clearTimeout(minuteur); minuteur = setTimeout(() => { t.hidden = true; }, duree);
+}
+
+/* ---------- Profil (prénom + âge) ---------- */
+function afficherSalut() {
+  const nom = profil && profil.prenom ? " " + profil.prenom : "";
+  $("salut").textContent = `Salut${nom} ! Content de te voir 🇨🇬 Appuie sur « Écouter » pour qu’on discute !`;
+}
+function ouvrirProfil(obligatoire) {
+  $("prenom").value = profil ? profil.prenom : "";
+  ageChoisi = profil ? profil.age : "";
+  majAges();
+  $("erreur-profil").textContent = "";
+  $("fermer").hidden = !!obligatoire;
+  $("voile").hidden = false;
+  setTimeout(() => $("prenom").focus(), 50);
+}
+function fermerProfil() { $("voile").hidden = true; }
+function majAges() {
+  document.querySelectorAll("#ages button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.age === ageChoisi)));
+}
+function validerProfil() {
+  const prenom = $("prenom").value.trim().slice(0, 20);
+  if (!prenom) { $("erreur-profil").textContent = "Écris ton prénom."; return; }
+  if (!ageChoisi) { $("erreur-profil").textContent = "Choisis ton âge."; return; }
+  profil = { prenom, age: ageChoisi };
+  ecrire("sb_profil", JSON.stringify(profil));
+  fermerProfil(); afficherSalut();
+  toast(`Bienvenue ${prenom} ! 🎉`);
+}
+
+/* ---------- Points et maillots ---------- */
+function maillotDebloque(m) { return points >= m.seuil; }
+function afficherPoints() { $("pts").textContent = String(points); }
+function afficherMaillots() {
+  const zone = $("maillots"); zone.innerHTML = "";
+  MAILLOTS.forEach(m => {
+    const ouvert = maillotDebloque(m);
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "maillot" + (m.id === maillotActif && ouvert ? " actif" : "") + (ouvert ? "" : " verrou");
+    const img = document.createElement("img"); img.src = m.img; img.alt = "";
+    const nom = document.createElement("span"); nom.className = "nom"; nom.textContent = m.nom;
+    b.append(img, nom);
+    if (!ouvert) {
+      const c = document.createElement("span"); c.className = "cadenas"; c.textContent = "🔒 " + m.seuil;
+      b.append(c);
+    }
+    b.addEventListener("click", () => {
+      if (!maillotDebloque(m)) { toast(`Encore ${m.seuil - points} point(s) pour débloquer le maillot ${m.nom} !`); return; }
+      maillotActif = m.id; ecrire("sb_maillot", m.id); appliquerMaillot(); afficherMaillots();
+    });
+    zone.append(b);
+  });
+  const suivant = MAILLOTS.find(m => !maillotDebloque(m));
+  $("prochain").textContent = suivant
+    ? `Encore ${suivant.seuil - points} point(s) pour le maillot ${suivant.nom}`
+    : "Bravo ! Tous les maillots sont débloqués 🎉";
+}
+function appliquerMaillot() {
+  const m = MAILLOTS.find(x => x.id === maillotActif) || MAILLOTS[0];
+  mascotte.src = m.img; $("img-bientot").src = m.img;
+}
+function gagnerPoints(n) {
+  const avant = points;
+  points += n; ecrire("sb_pts", String(points));
+  afficherPoints(); afficherMaillots();
+  const nouveau = MAILLOTS.find(m => m.seuil > avant && m.seuil <= points);
+  if (nouveau) toast(`🎉 Tu as débloqué le maillot ${nouveau.nom} !`, 5000);
+  else if (n > 0) toast(`+${n} point${n > 1 ? "s" : ""} ⭐`, 2000);
+}
+
+/* ---------- Navigation ---------- */
+function aller(nom, rubrique) {
+  vue = nom;
+  if (rubrique) rubCourante = rubrique;
+  const actif = nom === "bientot" ? rubCourante : nom;
+  arreterParole();
+  const vueId = nom === "chat" ? "v-chat" : nom === "accueil" ? "v-accueil" : nom === "quiz" ? "v-quiz" : nom === "galerie" ? "v-galerie" : nom === "equipe" ? "v-equipe" : "v-bientot";
+  ["v-accueil", "v-chat", "v-quiz", "v-galerie", "v-equipe", "v-bientot"].forEach(v => { $(v).hidden = (v !== vueId); });
+  if (nom === "equipe") majEquipe();
+  if (nom === "galerie") ouvrirGalerie(); else pauserGalerie();
+  if (nom === "quiz") quizAccueil();
+  if (vueId === "v-bientot") {
+    const r = RUBRIQUES.find(x => x.id === rubCourante);
+    $("bientot-titre").textContent = r ? r.e + " " + r.t : "";
+  }
+  document.querySelectorAll("nav button").forEach(b => {
+    if (b.dataset.nav === actif) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
+  });
+  if (nom === "accueil") jouerVideo(); else video.pause();
+  window.scrollTo(0, 0);
+}
+
+function construireGrille() {
+  const g = $("grille"); g.innerHTML = "";
+  RUBRIQUES.forEach(r => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "tuile" + (r.size === "demi" ? " demi" : "") + (r.live ? " live" : "");
+    const e = document.createElement("span"); e.className = "emoji"; e.textContent = r.e;
+    const t = document.createElement("b"); t.textContent = r.t;
+    const s = document.createElement("small"); s.textContent = r.d;
+    b.append(e, t, s);
+    b.addEventListener("click", () => aller(r.live ? r.id : "bientot", r.id));
+    g.append(b);
+  });
+}
+
+/* ---------- Vidéo ---------- */
+function jouerVideo() {
+  const p = video.play();
+  if (p && p.then) p.then(() => { $("lecture").hidden = true; }).catch(() => { $("lecture").hidden = false; });
+}
+$("lecture").addEventListener("click", () => { jouerVideo(); });
+video.addEventListener("error", () => { $("lecture").hidden = true; });
+video.addEventListener("playing", () => { $("lecture").hidden = true; });
+function majBoutonEcouter() { $("btn-ecouter").textContent = parle ? "⏹ Arrêter" : "🔊 Écouter Super Brazza"; }
+$("btn-ecouter").addEventListener("click", () => {
+  if (parle) { arreterParole(); return; }
+  const nom = profil && profil.prenom ? " " + profil.prenom : "";
+  parler(`Salut${nom} ! Je suis Super Brazza. Prêt à jouer avec moi ? Choisis une rubrique, ou pose-moi une question !`);
+});
+
+/* ---------- Voix de Super Brazza (synthèse vocale du téléphone) ---------- */
+const synth = ("speechSynthesis" in window) ? window.speechSynthesis : null;
+let voixFr = null;
+function chargerVoix() {
+  if (!synth) return;
+  const vs = synth.getVoices();
+  voixFr = vs.find(v => /^fr[-_]?FR/i.test(v.lang)) || vs.find(v => /^fr/i.test(v.lang)) || null;
+}
+if (synth) {
+  chargerVoix();
+  if (synth.addEventListener) synth.addEventListener("voiceschanged", chargerVoix);
+  else synth.onvoiceschanged = chargerVoix;
+}
+function nettoyerPourVoix(t) {
+  let r = String(t);
+  try { r = r.replace(/\p{Extended_Pictographic}/gu, " "); } catch (e) {}
+  return r.replace(/[«»*_#]/g, " ").replace(/\s+/g, " ").trim();
+}
+function decouper(t) {
+  const phrases = t.match(/[^.!?…:\n]+[.!?…:]?/g) || [t];
+  const out = []; let cur = "";
+  phrases.forEach(p => {
+    if ((cur + p).length > 170 && cur) { out.push(cur.trim()); cur = p; } else cur += p;
+  });
+  if (cur.trim()) out.push(cur.trim());
+  return out;
+}
+function majEtatVoix() {
+  majBoutonEcouter();
+  mascotte.classList.toggle("parle", parle);
+  const v = $("voix");
+  if (v) v.textContent = voixActive ? "🔊 Voix : oui" : "🔇 Voix : non";
+}
+function parler(texte, quandFini) {
+  if (!synth) { toast("Ton téléphone ne sait pas lire à voix haute."); return; }
+  arreterParole();
+  const morceaux = decouper(nettoyerPourVoix(texte));
+  if (!morceaux.length) return;
+  const moi = ++jetonVoix;
+  parle = true; majEtatVoix();
+  morceaux.forEach((m, i) => {
+    const u = new SpeechSynthesisUtterance(m);
+    u.lang = "fr-FR"; if (voixFr) u.voice = voixFr;
+    u.rate = 0.95; u.pitch = 1.05;
+    u.onerror = () => { if (moi === jetonVoix) { parle = false; majEtatVoix(); } };
+    if (i === morceaux.length - 1) {
+      u.onend = () => { if (moi === jetonVoix) { parle = false; majEtatVoix(); if (quandFini) quandFini(); } };
+    }
+    synth.speak(u);
+  });
+}
+function arreterParole() {
+  jetonVoix++;
+  if (synth) { try { synth.cancel(); } catch (e) {} }
+  if (parle) { parle = false; majEtatVoix(); }
+}
+function parlerSiActif(texte) { if (voixActive) parler(texte); }
+document.addEventListener("visibilitychange", () => { if (document.hidden) arreterParole(); });
+
+/* ---------- Chat ---------- */
+function afficherCompteur() {
+  const c = $("compteur"); c.textContent = "";
+  c.append("Questions restantes aujourd’hui : ");
+  const s = document.createElement("span"); s.textContent = String(restantes); c.append(s);
+}
+function memoriserRestantes(n) { restantes = n; ecrire("sb_reste_" + jour(), String(n)); afficherCompteur(); }
+function bloquer() {
+  bloque = true;
+  btnEnv.disabled = true; btnMic.disabled = true; champ.disabled = true;
+  zoneRep.classList.add("limite"); zoneRep.textContent = TXT.limite;
+  $("cahier").hidden = true;
+}
+
+async function demander() {
+  const question = champ.value.trim();
+  if (!question) { zoneRep.textContent = TXT.vide; delete zoneRep.dataset.rep; return; }
+  btnEnv.disabled = true; btnMic.disabled = true;
+  zoneRep.classList.remove("limite");
+  zoneRep.textContent = TXT.reflexion;
+  mascotte.classList.add("parle");
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question, deviceId: idAppareil(), lang: "fr" })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      zoneRep.textContent = data.answer; zoneRep.dataset.rep = "1"; dernierTexte = data.answer;
+      champ.value = ""; $("cahier").hidden = false;
+      memoriserRestantes(data.remaining);
+      gagnerPoints(POINTS_PAR_REPONSE);
+      parlerSiActif(data.answer);
+      if (data.remaining <= 0) { bloque = true; btnEnv.disabled = true; btnMic.disabled = true; champ.disabled = true; }
+    } else if (data.limitReached) {
+      memoriserRestantes(0); bloquer();
+    } else {
+      zoneRep.textContent = data.error || TXT.erreur; delete zoneRep.dataset.rep;
+      if (typeof data.remaining === "number") memoriserRestantes(data.remaining);
+    }
+  } catch (e) {
+    zoneRep.textContent = TXT.reseau; delete zoneRep.dataset.rep;
+  } finally {
+    mascotte.classList.remove("parle");
+    if (!bloque) { btnEnv.disabled = false; btnMic.disabled = false; }
+  }
+}
+
+
+
+/* ---------- Galerie d'ambiance ---------- */
+let galerieIdx = 0, galerieSon = false, galerieObs = null, galerieConstruite = false;
+function statutMaillot(id) {
+  if (id === "saga") return "🎬 Bonus";
+  const m = MAILLOTS.find(x => x.id === id);
+  if (!m) return "";
+  return maillotDebloque(m) ? "✅ Débloqué" : `🔒 ${m.seuil} points`;
+}
+function construireGalerie() {
+  if (galerieConstruite) return;
+  const zone = $("glisse"); zone.innerHTML = "";
+  GALERIE.forEach((g, i) => {
+    const d = document.createElement("div"); d.className = "diapo"; d.dataset.i = String(i);
+    const v = document.createElement("video");
+    v.poster = g.poster; v.muted = true; v.loop = true; v.playsInline = true; v.preload = i === 0 ? "auto" : "metadata";
+    v.setAttribute("playsinline", ""); v.dataset.src = g.video;
+    if (i === 0) v.src = g.video;
+    d.append(v); zone.append(d);
+  });
+  const pts = $("g-points"); pts.innerHTML = "";
+  GALERIE.forEach(() => pts.append(document.createElement("i")));
+  if ("IntersectionObserver" in window) {
+    galerieObs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting && e.intersectionRatio >= 0.6) allerDiapo(Number(e.target.dataset.i), false); });
+    }, { root: zone, threshold: [0.6] });
+    zone.querySelectorAll(".diapo").forEach(d => galerieObs.observe(d));
+  }
+  galerieConstruite = true;
+}
+function videoDiapo(i) { const d = $("glisse").children[i]; return d ? d.querySelector("video") : null; }
+function majGalerie() {
+  const g = GALERIE[galerieIdx];
+  $("g-titre").textContent = `${g.titre} · ${galerieIdx + 1}/${GALERIE.length}`;
+  $("g-statut").textContent = statutMaillot(g.id);
+  [...$("g-points").children].forEach((p, i) => p.classList.toggle("actif", i === galerieIdx));
+  $("g-son").textContent = galerieSon ? "🔊" : "🔇";
+  $("g-prec").style.visibility = galerieIdx === 0 ? "hidden" : "visible";
+  $("g-suiv").style.visibility = galerieIdx === GALERIE.length - 1 ? "hidden" : "visible";
+}
+function jouerDiapo(i) {
+  GALERIE.forEach((_, k) => {
+    const v = videoDiapo(k); if (!v) return;
+    if (k === i) {
+      if (!v.getAttribute("src")) v.src = v.dataset.src;
+      v.muted = !galerieSon;
+      const p = v.play(); if (p && p.catch) p.catch(() => {});
+    } else { v.pause(); v.currentTime = 0; }
+  });
+}
+function allerDiapo(i, defiler) {
+  if (i < 0 || i >= GALERIE.length) return;
+  if (i === galerieIdx && !defiler) { majGalerie(); return; }
+  galerieIdx = i;
+  if (defiler) { const z = $("glisse"); z.scrollTo({ left: z.clientWidth * i, behavior: "smooth" }); }
+  majGalerie(); jouerDiapo(i);
+}
+function ouvrirGalerie() {
+  video.pause();
+  construireGalerie();
+  galerieIdx = 0;
+  $("glisse").scrollTo({ left: 0 });
+  majGalerie(); jouerDiapo(0);
+}
+function pauserGalerie() {
+  if (!galerieConstruite) return;
+  GALERIE.forEach((_, k) => { const v = videoDiapo(k); if (v) v.pause(); });
+}
+
+
+/* ---------- Notre Équipe et partage ---------- */
+const SITE_URL = "https://didank67-ops.github.io/Super-Brazza/";
+function majEquipe() {
+  const z = $("equipe-resume"); z.innerHTML = "";
+  z.append(el("div", "quiz-q", "Mon équipe aujourd’hui"));
+  const nom = profil && profil.prenom ? profil.prenom : "Mon enfant";
+  const ouverts = MAILLOTS.filter(maillotDebloque).length;
+  z.append(el("p", "", `👤 ${nom}`));
+  z.append(el("p", "", `⭐ ${points} point${points > 1 ? "s" : ""}`));
+  z.append(el("p", "", `👕 Maillots débloqués : ${ouverts} / ${MAILLOTS.length}`));
+  z.append(el("p", "", `💬 Questions restantes aujourd’hui : ${restantes} / ${LIMITE}`));
+  z.append(el("p", "", `🧠 Points de quiz aujourd’hui : ${quizPointsAujourdhui()} / ${QUIZ_POINTS_MAX_JOUR}`));
+}
+function texteDePartage() {
+  const nom = profil && profil.prenom ? profil.prenom : "Mon enfant";
+  const ouverts = MAILLOTS.filter(maillotDebloque).length;
+  return `${nom} joue avec Super Brazza ! 🇨🇬 ⭐ ${points} point${points > 1 ? "s" : ""}, ${ouverts} maillot${ouverts > 1 ? "s" : ""} débloqué${ouverts > 1 ? "s" : ""}. Viens apprendre le Congo en jouant :`;
+}
+function ouvrirPartage() {
+  $("p-texte").textContent = texteDePartage() + " " + SITE_URL;
+  $("p-sys").hidden = !navigator.share;
+  $("partage").hidden = false;
+}
+function fermerPartage() { $("partage").hidden = true; }
+function ouvrirLien(url) { window.open(url, "_blank", "noopener"); }
+async function partagerSysteme() {
+  const texte = texteDePartage();
+  try {
+    let donnees = { title: "Super Brazza — La Saga", text: texte + " " + SITE_URL };
+    try {
+      const rep = await fetch("equipe-saga.jpg");
+      const blob = await rep.blob();
+      const fichier = new File([blob], "super-brazza-la-saga.jpg", { type: "image/jpeg" });
+      if (navigator.canShare && navigator.canShare({ files: [fichier] })) donnees.files = [fichier];
+    } catch (e) {}
+    if (!donnees.files) donnees.url = SITE_URL;
+    await navigator.share(donnees);
+  } catch (e) { /* partage annulé */ }
+}
+async function copierLien() {
+  const t = texteDePartage() + " " + SITE_URL;
+  try { await navigator.clipboard.writeText(t); toast("Lien copié ✅"); }
+  catch (e) {
+    const a = document.createElement("textarea"); a.value = t; document.body.append(a); a.select();
+    try { document.execCommand("copy"); toast("Lien copié ✅"); } catch (e2) { toast("Copie impossible sur ce téléphone."); }
+    a.remove();
+  }
+}
+
+/* ---------- Quiz Congo ---------- */
+function melanger(a) {
+  const r = a.slice();
+  for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [r[i], r[j]] = [r[j], r[i]]; }
+  return r;
+}
+function niveauxPourAge() {
+  const age = profil ? profil.age : "7-9";
+  return age === "4-6" ? [1] : age === "10-12" ? [2, 3] : [1, 2];
+}
+function quizPointsAujourdhui() { return parseInt(lire("sb_quizpts_" + jour()) || "0", 10) || 0; }
+function prenomOuChampion() { return profil && profil.prenom ? profil.prenom : "champion"; }
+function el(tag, cls, txt) { const e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; }
+
+function vusQuiz() { try { return JSON.parse(lire("sb_quiz_vus") || "[]"); } catch (e) { return []; } }
+function noterVue(id) {
+  const v = vusQuiz(); if (v.indexOf(id) === -1) { v.push(id); ecrire("sb_quiz_vus", JSON.stringify(v.slice(-900))); }
+}
+function poolQuiz(cat) {
+  const niv = niveauxPourAge();
+  let pool = QUIZ.filter(q => (!cat || q.c === cat) && niv.includes(q.n));
+  if (pool.length < QUIZ_PAR_PARTIE) pool = QUIZ.filter(q => !cat || q.c === cat); // pas assez : tous les niveaux
+  return pool;
+}
+function quizAccueil() {
+  const z = $("quiz-zone"); z.innerHTML = "";
+  const c = el("div", "quiz-carte");
+  c.append(el("div", "score", "🧠"));
+  c.append(el("div", "quiz-q", "Quiz Congo"));
+  if (!QUIZ.length) { c.append(el("p", "", "Les questions ne sont pas encore chargées.")); z.append(c); return; }
+  c.append(el("p", "", `${QUIZ_PAR_PARTIE} questions par partie. Chaque bonne réponse te donne 1 point (jusqu’à ${QUIZ_POINTS_MAX_JOUR} points par jour).`));
+  c.append(el("p", "", `Points gagnés aujourd’hui avec le quiz : ${quizPointsAujourdhui()} / ${QUIZ_POINTS_MAX_JOUR}`));
+  c.append(el("p", "", `Choisis un thème (${QUIZ.length} questions en tout) :`));
+  const grille = el("div", "cats");
+  const melange = el("button", "cat large"); melange.type = "button";
+  melange.append(el("span", "emoji", "🎲"), document.createTextNode("Mélange de tous les thèmes"));
+  melange.addEventListener("click", () => lancerQuiz(""));
+  grille.append(melange);
+  QUIZ_CATS.forEach(k => {
+    const b = el("button", "cat"); b.type = "button";
+    b.append(el("span", "emoji", k.e), document.createTextNode(k.t));
+    b.append(el("small", "", `${poolQuiz(k.id).length} questions`));
+    b.addEventListener("click", () => lancerQuiz(k.id));
+    grille.append(b);
+  });
+  c.append(grille); z.append(c);
+}
+function lancerQuiz(cat) {
+  if (cat !== undefined) quizCat = cat;
+  const vus = vusQuiz();
+  const pool = poolQuiz(quizCat);
+  const nouvelles = melanger(pool.filter(q => vus.indexOf(q.id) === -1));
+  const anciennes = melanger(pool.filter(q => vus.indexOf(q.id) !== -1));
+  quizPartie = nouvelles.concat(anciennes).slice(0, QUIZ_PAR_PARTIE);
+  quizIdx = 0; quizBonnes = 0;
+  quizQuestion();
+}
+function quizQuestion() {
+  const q = quizPartie[quizIdx];
+  const z = $("quiz-zone"); z.innerHTML = "";
+  const c = el("div", "quiz-carte");
+  c.append(el("div", "quiz-prog", `Question ${quizIdx + 1} / ${quizPartie.length}`));
+  c.append(el("div", "quiz-q", q.q));
+  const ordre = melanger(q.r.map((txt, i) => ({ txt, bon: i === q.ok })));
+  const lettres = ["A", "B", "C"];
+  const liste = el("div", "reps");
+  const fb = el("div", "quiz-fb"); fb.hidden = true;
+  const suite = el("button", "gros", quizIdx + 1 < quizPartie.length ? "Question suivante" : "Voir mon score");
+  suite.type = "button"; suite.hidden = true;
+  suite.addEventListener("click", () => { arreterParole(); if (quizIdx + 1 < quizPartie.length) { quizIdx++; quizQuestion(); } else quizFin(); });
+  const boutons = ordre.map((o, i) => {
+    const b = el("button", "rep", `${lettres[i]}. ${o.txt}`); b.type = "button";
+    b.addEventListener("click", () => {
+      noterVue(q.id);
+      boutons.forEach((x, k) => { x.disabled = true; if (ordre[k].bon) x.classList.add("bon"); });
+      let msg;
+      if (o.bon) { quizBonnes++; msg = `Bravo ${prenomOuChampion()} ! ${q.info}`; }
+      else { b.classList.add("mauvais"); msg = `Presque ! La bonne réponse : ${q.r[q.ok]}. ${q.info}`; }
+      fb.textContent = msg; fb.hidden = false; suite.hidden = false;
+      parlerSiActif(msg);
+    });
+    liste.append(b); return b;
+  });
+  c.append(liste, fb, suite);
+  const ecouter = el("button", "mini", "🔁 Réécouter la question"); ecouter.type = "button";
+  ecouter.style.marginTop = "14px";
+  const lireQuestion = () => parler(`${q.q} ${ordre.map((o, i) => `Réponse ${lettres[i]} : ${o.txt}.`).join(" ")}`);
+  ecouter.addEventListener("click", lireQuestion);
+  c.append(ecouter); z.append(c);
+  window.scrollTo(0, 0);
+  if (voixActive) lireQuestion();
+}
+function quizFin() {
+  const z = $("quiz-zone"); z.innerHTML = "";
+  const deja = quizPointsAujourdhui();
+  const place = Math.max(0, QUIZ_POINTS_MAX_JOUR - deja);
+  const gagnes = Math.min(quizBonnes, place);
+  if (gagnes > 0) { ecrire("sb_quizpts_" + jour(), String(deja + gagnes)); gagnerPoints(gagnes); }
+  const c = el("div", "quiz-carte");
+  c.append(el("div", "score", `${quizBonnes} / ${quizPartie.length}`));
+  let phrase;
+  if (quizBonnes === quizPartie.length) phrase = `Bravo ${prenomOuChampion()} ! Tu as tout bon !`;
+  else if (quizBonnes >= 3) phrase = `Bien joué ${prenomOuChampion()} !`;
+  else phrase = `Courage ${prenomOuChampion()}, on recommence et tu vas y arriver !`;
+  c.append(el("div", "quiz-q", phrase));
+  let pts;
+  if (gagnes > 0) pts = `Tu gagnes ${gagnes} point${gagnes > 1 ? "s" : ""} ⭐`;
+  else if (place === 0) pts = "Tu as déjà gagné tous tes points du quiz aujourd’hui. Reviens demain pour en gagner d’autres !";
+  else pts = "Pas de point cette fois. Réessaie !";
+  c.append(el("p", "", pts));
+  const re = el("button", "gros", "Rejouer"); re.type = "button"; re.addEventListener("click", () => lancerQuiz(quizCat));
+  const ac = el("button", "gros second", "Choisir un autre thème"); ac.type = "button"; ac.addEventListener("click", quizAccueil);
+  c.append(re, ac); z.append(c);
+  parlerSiActif(`${phrase} ${gagnes > 0 ? pts : ""}`);
+}
+
+/* ---------- Micro (navigateur) ---------- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+function basculerMicro() {
+  if (!SR) { zoneRep.textContent = TXT.pasMicro; delete zoneRep.dataset.rep; return; }
+  if (enEcoute && rec) { rec.stop(); return; }
+  arreterParole();
+  rec = new SR();
+  rec.lang = "fr-FR"; rec.interimResults = false; rec.maxAlternatives = 1;
+  rec.onstart = () => { enEcoute = true; btnMic.classList.add("ecoute"); btnMic.textContent = "🎤 J’écoute…"; };
+  rec.onresult = ev => { champ.value = ev.results[0][0].transcript; };
+  rec.onerror = () => { zoneRep.textContent = TXT.microErreur; delete zoneRep.dataset.rep; };
+  rec.onend = () => { enEcoute = false; btnMic.classList.remove("ecoute"); btnMic.textContent = "🎤 Parler"; };
+  rec.start();
+}
+
+/* ---------- Événements ---------- */
+$("crayon").addEventListener("click", () => ouvrirProfil(false));
+$("go").addEventListener("click", validerProfil);
+$("fermer").addEventListener("click", fermerProfil);
+$("prenom").addEventListener("keydown", e => { if (e.key === "Enter") validerProfil(); });
+document.querySelectorAll("#ages button").forEach(b => b.addEventListener("click", () => { ageChoisi = b.dataset.age; majAges(); }));
+$("retour").addEventListener("click", () => aller("accueil"));
+$("g-fermer").addEventListener("click", () => aller("accueil"));
+$("equipe-retour").addEventListener("click", () => aller("accueil"));
+$("btn-partager").addEventListener("click", ouvrirPartage);
+$("p-fermer").addEventListener("click", fermerPartage);
+$("partage").addEventListener("click", e => { if (e.target === $("partage")) fermerPartage(); });
+$("p-wa").addEventListener("click", () => ouvrirLien("https://wa.me/?text=" + encodeURIComponent(texteDePartage() + " " + SITE_URL)));
+$("p-fb").addEventListener("click", () => ouvrirLien("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(SITE_URL)));
+$("p-tg").addEventListener("click", () => ouvrirLien("https://t.me/share/url?url=" + encodeURIComponent(SITE_URL) + "&text=" + encodeURIComponent(texteDePartage())));
+$("p-sys").addEventListener("click", partagerSysteme);
+$("p-copier").addEventListener("click", copierLien);
+$("g-prec").addEventListener("click", () => allerDiapo(galerieIdx - 1, true));
+$("g-suiv").addEventListener("click", () => allerDiapo(galerieIdx + 1, true));
+$("g-son").addEventListener("click", () => {
+  galerieSon = !galerieSon;
+  const v = videoDiapo(galerieIdx); if (v) { v.muted = !galerieSon; if (v.paused) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } }
+  majGalerie();
+});
+$("quiz-retour").addEventListener("click", () => aller("accueil"));
+$("voix").addEventListener("click", () => {
+  voixActive = !voixActive; ecrire("sb_voix", voixActive ? "on" : "off");
+  if (!voixActive) arreterParole();
+  majEtatVoix();
+});
+$("reecouter").addEventListener("click", () => {
+  if (dernierTexte) parler(dernierTexte); else toast("Pose d’abord une question à Super Brazza !");
+});
+document.querySelectorAll("nav button").forEach(b => {
+  b.addEventListener("click", () => {
+    const n = b.dataset.nav;
+    aller(n === "chat" || n === "accueil" || n === "quiz" ? n : "bientot", n);
+  });
+});
+btnEnv.addEventListener("click", demander);
+btnMic.addEventListener("click", basculerMicro);
+champ.addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); demander(); }
+});
+// Certains téléphones n'autorisent la lecture qu'après un premier toucher
+document.addEventListener("pointerdown", () => { if (vue === "accueil" && video.paused && $("voile").hidden) jouerVideo(); }, { once: true });
+
+/* ---------- Démarrage ---------- */
+try { profil = JSON.parse(lire("sb_profil") || "null"); } catch (e) { profil = null; }
+points = Math.max(0, parseInt(lire("sb_pts") || "0", 10) || 0);
+maillotActif = lire("sb_maillot") || "vert";
+const mActif = MAILLOTS.find(m => m.id === maillotActif);
+if (!mActif || !maillotDebloque(mActif)) maillotActif = "vert";
+const r0 = lire("sb_reste_" + jour());
+if (r0 !== null) restantes = Math.max(0, parseInt(r0, 10) || 0);
+
+voixActive = lire("sb_voix") !== "off";
+construireGrille(); afficherSalut(); afficherPoints(); afficherMaillots(); appliquerMaillot(); afficherCompteur();
+zoneRep.textContent = TXT.accueilChat;
+if (restantes <= 0) bloquer();
+majEtatVoix();
+jouerVideo();
+if (!profil) ouvrirProfil(true);
+</script>
+</body>
+</html>
